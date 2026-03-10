@@ -1,9 +1,10 @@
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, flash
 import sqlite3
 from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions
-
+import os
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
 
 def get_db():
     conn = sqlite3.connect("instance/tend.db")
@@ -65,17 +66,35 @@ def home():
 
     return render_template("home.html", zones=formatted_zones, weather=weather)
 
-@app.route("/zones/new", methods=["GET","POST"])
+@app.route("/zones/new", methods=["GET", "POST"])
 def zones_new():
     if request.method == "POST":
-        name = request.form.get("name")
-        site_location = request.form.get("site_location")
+        name = request.form.get("name", "").strip()
+        site_location = request.form.get("site_location", "").strip() or None
         sun = request.form.get("sun") or None
+        forecast_zip = request.form.get("forecast_zip", "").strip() or None
+
+        # validate
+        errors = []
+        if not name:
+            errors.append("Zone name is required.")
+        if forecast_zip and (not forecast_zip.isdigit() or len(forecast_zip) != 5):
+            errors.append("ZIP code must be exactly 5 digits.")
+
+        if errors:
+            for error in errors:
+                flash(error)
+            return redirect("/zones/new")
+
+        latitude, longitude = None, None
+        if forecast_zip:
+            latitude, longitude = zip_to_latlon(forecast_zip)
 
         db = get_db()
-        db.execute("INSERT INTO zones (name, site_location, sun) VALUES (?, ?, ?)", 
-                   (name, site_location, sun))
-        
+        db.execute(
+            "INSERT INTO zones (name, site_location, sun) VALUES (?, ?, ?)",
+            (name, site_location, sun)
+        )
         db.commit()
         db.close()
 
@@ -157,7 +176,9 @@ def zone_detail(zone_id):
         zone["name"],
         zone["sun"],
         zone_plants,
-        formatted_observations
+        formatted_observations,
+        suggested_plants,
+        weather_conditions if isinstance(weather_conditions, dict) and "temp_high" in weather_conditions else None
     )
 
     return render_template("zone_detail.html", 
@@ -172,16 +193,22 @@ def zone_detail(zone_id):
 @app.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
     plant_id = request.form.get("plant_id")
-    quantity = request.form.get("quantity") or 1
+    quantity = request.form.get("quantity", "1").strip()
+
+    if not plant_id:
+        flash("Please select a plant.")
+        return redirect(f"/zones/{zone_id}")
+
+    if not quantity.isdigit() or int(quantity) < 1:
+        quantity = 1
 
     db = get_db()
     db.execute(
         "INSERT INTO zone_plants (zone_id, plant_id, quantity) VALUES (?, ?, ?)",
-        (zone_id, plant_id, quantity)
+        (zone_id, plant_id, int(quantity))
     )
     db.commit()
     db.close()
-
 
     return redirect(f"/zones/{zone_id}")
 
@@ -230,9 +257,19 @@ def settings():
     if request.method == "POST":
         home_zip = request.form.get("home_zip", "").strip() or None
 
+        if home_zip and (not home_zip.isdigit() or len(home_zip) != 5):
+            flash("ZIP code must be exactly 5 digits.")
+            db.close()
+            return redirect("/settings")
+
         latitude, longitude = None, None
         if home_zip:
             latitude, longitude = zip_to_latlon(home_zip)
+
+            if latitude is None:
+                flash("ZIP code not found. Please try another.")
+                db.close()
+                return redirect("/settings")
 
         db.execute(
             "UPDATE settings SET home_zip = ?, latitude = ?, longitude = ? WHERE id = 1",
@@ -246,6 +283,62 @@ def settings():
     db.close()
 
     return render_template("settings.html", settings=current)
+
+
+@app.route("/zones/<int:zone_id>/edit", methods=["GET", "POST"])
+def zone_edit(zone_id):
+    db = get_db()
+    zone = db.execute("SELECT * FROM zones WHERE id = ?", (zone_id,)).fetchone()
+
+    if not zone:
+        flash("Zone not found.")
+        db.close()
+        return redirect("/")
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        site_location = request.form.get("site_location", "").strip() or None
+        sun = request.form.get("sun") or None
+
+        errors = []
+        if not name:
+            errors.append("Zone name is required.")
+
+        if errors:
+            for error in errors:
+                flash(error)
+            db.close()
+            return redirect(f"/zones/{zone_id}/edit")
+
+        db.execute(
+            "UPDATE zones SET name = ?, site_location = ?, sun = ? WHERE id = ?",
+            (name, site_location, sun, zone_id)
+        )
+        db.commit()
+        db.close()
+        return redirect(f"/zones/{zone_id}")
+
+    db.close()
+    return render_template("zone_edit.html", zone=zone)
+
+
+@app.route("/zones/<int:zone_id>/delete", methods=["POST"])
+def zone_delete(zone_id):
+    db = get_db()
+
+    # delete children first, then the zone
+    db.execute("DELETE FROM observations WHERE zone_id = ?", (zone_id,))
+    db.execute("DELETE FROM zone_plants WHERE zone_id = ?", (zone_id,))
+    db.execute("DELETE FROM zones WHERE id = ?", (zone_id,))
+
+    db.commit()
+    db.close()
+
+    flash("Garden space deleted.")
+    return redirect("/")
+
+
+
 
 
 

@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Zone — Tend{% endblock %}
+
+{% block weather_mood %}neutral{% endblock %}
+
+{% block content %}
+  <h1>Edit {{ zone["name"] }}</h1>
+
+  <form method="post">
+    <label>
+      Zone name:
+      <input name="name" value="{{ zone['name'] }}" required />
+    </label>
+
+    <br><br>
+
+    <label>
+      Site Location:
+      <input name="site_location" value="{{ zone['site_location'] or '' }}" placeholder="e.g. By the back shed" />
+    </label>
+
+    <br><br>
+
+    <label>
+      Sun Exposure:
+      <select name="sun">
+        <option value="">(choose one)</option>
+        <option value="full" {% if zone['sun'] == 'full' %}selected{% endif %}>Full</option>
+        <option value="partial" {% if zone['sun'] == 'partial' %}selected{% endif %}>Partial</option>
+        <option value="shade" {% if zone['sun'] == 'shade' %}selected{% endif %}>Shade</option>
+      </select>
+    </label>
+
+    <br><br>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <br>
+
+  <form method="post" action="/zones/{{ zone['id'] }}/delete">
+    <button 
+      type="submit" 
+      onclick="return confirm('Are you sure? This will permanently delete this zone and all its plants and observations.')">
+      Delete this zone
+    </button>
+  </form>
+
+  <br>
+  <p><a href="/zones/{{ zone['id'] }}">Cancel</a></p>
+
+{% endblock %}

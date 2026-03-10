@@ -11,20 +11,30 @@
     <p>Location: {{ zone["site_location"] }}</p>
   {% endif %}
 
-  {% if zone["forecast_zip"] %}
-    <p>Forecast ZIP: {{ zone["forecast_zip"] }}</p>
-  {% endif %}
-
   {% if zone["sun"] %}
     <p>Sun: {{ zone["sun"] }}</p>
   {% endif %}
 
   <p><a href="/">Back to home</a></p>
+  <p><a href="/">Back to home</a> · <a href="/zones/{{ zone['id'] }}/edit">Edit zone</a></p>
 
   <h2>Weather Conditions</h2>
   <div class="weather-banner {{ weather_conditions.mood }}">
-    {% if weather_conditions.mood == "rainy" %}🌧{% elif weather_conditions.mood == "sunny" %}☀️{% else %}🌱{% endif %}
+    {% if weather_conditions.mood == "rainy" %}🌧
+    {% elif weather_conditions.mood == "cloudy" %}☁️
+    {% elif weather_conditions.mood == "sunny" %}☀️
+    {% else %}🌱
+    {% endif %}
     {{ weather_conditions["message"] }}
+
+    {% if weather_conditions.temp_high %}
+      <span class="weather-details">
+        {{ weather_conditions.temp_low }}°–{{ weather_conditions.temp_high }}°F
+        · {{ weather_conditions.humidity }}% humidity
+        · UV {{ weather_conditions.uv_index }}
+        · {{ weather_conditions.wind_mph }} mph wind
+      </span>
+    {% endif %}
   </div>
 
   <h2>Plants in this space</h2>
@@ -42,10 +52,8 @@
           {% elif zp["plant_type"] == "native grass" %}🌾
           {% else %}🌱
           {% endif %}
-
           {{ zp["common_name"] }}
           ({{ zp["quantity"] }})
-
           <form method="post" action="/zone-plants/{{ zp['id'] }}/delete" style="display:inline;">
             <button type="submit">Remove</button>
           </form>
@@ -54,7 +62,7 @@
     </ul>
   {% endif %}
 
-  <h2>Plant in garden</h2>
+  <h2>Add a Plant</h2>
 
   <form method="post" action="/zones/{{ zone['id'] }}/add-plant">
     <label>
@@ -104,60 +112,14 @@
     {% endfor %}
   {% endif %}
 
-
-{% if ai_suggestions %}
-  <h2>Tend Intelligence</h2>
-  <div class="ai-suggestions">
-    {{ ai_suggestions }}
-  </div>
-{% endif %}
-
-  <h2>Plans & Suggestions</h2>
-
-  {% if zone["sun"] %}
-    <p>Companion plants for this space's sun conditions:</p>
-
-    {% if suggested_plants|length == 0 %}
-      <p>No suggestions right now — you may already have all matching plants from the Tend catalog in this space.</p>
-    {% else %}
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Plant</th>
-            <th>Sun</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for sp in suggested_plants %}
-            <tr>
-              <td>{{ sp["plant_type"] }}</td>
-              <td>
-                {% if sp["plant_type"] == "herb" %}🌿
-                {% elif sp["plant_type"] == "flower" %}🌸
-                {% elif sp["plant_type"] == "vegetable" %}🥕
-                {% elif sp["plant_type"] == "berry" %}🍓
-                {% elif sp["plant_type"] == "native grass" %}🌾
-                {% else %}🌱
-                {% endif %}
-                {{ sp["common_name"] }}
-              </td>
-              <td>{{ sp["sun"] }}</td>
-              <td>
-                <form method="post" action="/zones/{{ zone['id'] }}/add-plant" style="display:inline;">
-                  <input type="hidden" name="plant_id" value="{{ sp['id'] }}">
-                  <input type="hidden" name="quantity" value="1">
-                  <button type="submit">Add</button>
-                </form>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
-  {% else %}
-    <p>Add sun information to this garden space to get suggestions.</p>
+  {% if ai_suggestions %}
+    <h2>Tend Intelligence</h2>
+    <details>
+      <summary>View garden suggestions</summary>
+      <div class="ai-suggestions">
+        {{ ai_suggestions }}
+      </div>
+    </details>
   {% endif %}
 
 {% endblock %}

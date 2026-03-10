@@ -8,16 +8,26 @@
   </head>
   <body class="{% block weather_mood %}neutral{% endblock %}">
 
-<header>
-  <h2>Tend</h2>
-  <p>A Hub for Garden Cultivation</p>
-  <nav>
-    <a href="/">Home</a> · <a href="/settings">Settings</a>
-  </nav>
-  <hr />
-</header>
+    <header>
+      <h2>Tend</h2>
+      <p>A Hub for Garden Cultivation</p>
+      <nav>
+        <a href="/">Home</a> · <a href="/settings">Settings</a>
+      </nav>
+      <hr />
+    </header>
 
     <main>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for message in messages %}
+              <p class="flash">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
       {% block content %}{% endblock %}
     </main>
 
