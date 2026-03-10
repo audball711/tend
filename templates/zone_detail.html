@@ -104,6 +104,14 @@
     {% endfor %}
   {% endif %}
 
+
+{% if ai_suggestions %}
+  <h2>Tend Intelligence</h2>
+  <div class="ai-suggestions">
+    {{ ai_suggestions }}
+  </div>
+{% endif %}
+
   <h2>Plans & Suggestions</h2>
 
   {% if zone["sun"] %}

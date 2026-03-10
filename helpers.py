@@ -1,5 +1,10 @@
 import requests
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+import anthropic
+
+load_dotenv()
 
 
 def format_date(date_string):
@@ -31,3 +36,37 @@ def get_weather_conditions(latitude, longitude):
             "message": "No rain expected soon. Consider watering after planting if soil is dry.",
             "mood": "sunny"
         }
+    
+
+def get_ai_suggestions(zone_name, sun, zone_plants, observations):
+    # Don't call the API if there's nothing to analyze
+    if not observations:
+        return None
+
+    # Build a readable list of current plants
+    plant_list = ", ".join([p["common_name"] for p in zone_plants]) if zone_plants else "none yet"
+
+    # Build a readable list of recent observations (last 5)
+    observation_list = "\n".join([f"- {obs['note']}" for obs in observations[:10]])
+
+    prompt = f"""You are a knowledgeable garden assistant. Based on the following garden zone information, provide 2-3 specific, actionable suggestions.
+
+Zone: {zone_name}
+Sun exposure: {sun}
+Current plants: {plant_list}
+Recent observations:
+{observation_list}
+
+Respond with 2-3 short, practical suggestions based on the observations. Each suggestion should be 1-2 sentences. Be specific to what was observed. Do not use bullet points or numbering — just separate suggestions with a blank line."""
+
+    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+    message = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=300,
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    return message.content[0].text

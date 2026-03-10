@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request
 import sqlite3
-from helpers import get_weather_conditions, zip_to_latlon, format_date
+from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions
 
 
 app = Flask(__name__)
@@ -153,13 +153,21 @@ def zone_detail(zone_id):
 
     db.close()
 
+    ai_suggestions = get_ai_suggestions(
+        zone["name"],
+        zone["sun"],
+        zone_plants,
+        formatted_observations
+    )
+
     return render_template("zone_detail.html", 
                            zone=zone, 
                            plants=plants,
                            zone_plants=zone_plants,
                            observations=formatted_observations,
                            suggested_plants=suggested_plants,
-                           weather_conditions=weather_conditions)
+                           weather_conditions=weather_conditions,
+                           ai_suggestions=ai_suggestions)
 
 @app.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
@@ -173,6 +181,7 @@ def add_plant_to_zone(zone_id):
     )
     db.commit()
     db.close()
+
 
     return redirect(f"/zones/{zone_id}")
 
