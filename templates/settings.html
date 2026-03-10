@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}Settings — Tend{% endblock %}
+
+{% block weather_mood %}neutral{% endblock %}
+
+{% block content %}
+  <h1>Garden Settings</h1>
+
+  <p>Set your garden's location to enable weather forecasts across all your zones.</p>
+
+  {% if settings["home_zip"] %}
+    <p>Current ZIP: <strong>{{ settings["home_zip"] }}</strong></p>
+  {% else %}
+    <p>No location set yet.</p>
+  {% endif %}
+
+  <form method="post">
+    <label>
+      Home ZIP Code:
+      <input name="home_zip" 
+             placeholder="e.g., 06410" 
+             maxlength="5"
+             value="{{ settings['home_zip'] or '' }}" />
+    </label>
+
+    <br><br>
+
+    <button type="submit">Save</button>
+  </form>
+
+  <p><a href="/">Back to home</a></p>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}New Zone — Tend{% endblock %}
+
+{% block weather_mood %}neutral{% endblock %}
+
+{% block content %}
+  <h1>Create a Zone</h1>
+
+  <form method="post">
+    <label>
+      Zone name:
+      <input name="name" placeholder="e.g., Kitchen Herb Box" required />
+    </label>
+
+    <label>
+      Site Location:
+      <input name="site_location" placeholder="e.g., By the back shed" />
+    </label>
+
+    <label>
+      Sun Exposure:
+      <select name="sun">
+        <option value="">(choose one)</option>
+        <option value="full">Full</option>
+        <option value="partial">Partial</option>
+        <option value="shade">Shade</option>
+      </select>
+    </label>
+
+    <button type="submit">Create</button>
+  </form>
+
+  <p><a href="/">Back to home</a></p>
+{% endblock %}

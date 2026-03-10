@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Tend{% endblock %}</title>
+  </head>
+  <body class="{% block weather_mood %}neutral{% endblock %}">
+
+<header>
+  <h2>Tend</h2>
+  <p>A Hub for Garden Cultivation</p>
+  <nav>
+    <a href="/">Home</a> · <a href="/settings">Settings</a>
+  </nav>
+  <hr />
+</header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+  </body>
+</html>

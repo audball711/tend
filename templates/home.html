@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}Tend{% endblock %}
+
+{% block weather_mood %}{{ weather.mood if weather else "neutral" }}{% endblock %}
+
+{% block content %}
+  <h1>Cultivate</h1>
+  <p>Welcome to Tend — your cultivation hub.</p>
+
+  {% if weather %}
+    <div class="weather-banner {{ weather.mood }}">
+      {% if weather.mood == "rainy" %}🌧{% else %}☀️{% endif %}
+      {{ weather.message }}
+    </div>
+  {% endif %}
+
+  <p>
+    <a href="/zones/new">Create a garden space</a>
+  </p>
+
+  <h2>Your Garden Spaces</h2>
+
+  {% if zones|length == 0 %}
+    <p>No garden spaces yet. Create one whenever you feel like it.</p>
+  {% else %}
+    <div>
+      {% for z in zones %}
+        <details class="zone-card">
+          <summary>
+            <strong>{{ z["name"] }}</strong>
+
+            {% if z["site_location"] %}
+              — {{ z["site_location"] }}
+            {% endif %}
+
+            {% if z["sun"] %}
+              ({{ z["sun"] }})
+            {% endif %}
+
+            <br>
+            <small>Plants: {{ z["plant_count"] }}</small>
+          </summary>
+
+          <div class="zone-reveal">
+            <p><strong>Quick View</strong></p>
+
+            <p>
+              {% if z["plant_count"] == 0 %}
+                No plants added yet.
+              {% elif z["plant_count"] == 1 %}
+                1 plant in this space.
+              {% else %}
+                {{ z["plant_count"] }} plants in this space.
+              {% endif %}
+            </p>
+
+            {% if z["latest_note"] %}
+              <p><strong>Latest observation:</strong></p>
+              {% if z["latest_note_date"] %}
+                <p><small>{{ z["latest_note_date"] }}</small></p>
+              {% endif %}
+              <p>{{ z["latest_note"] }}</p>
+            {% else %}
+              <p><strong>Latest observation:</strong></p>
+              <p>No observations yet.</p>
+            {% endif %}
+
+            <p>
+              <a href="/zones/{{ z['id'] }}">Open garden builder</a>
+            </p>
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+{% endblock %}
