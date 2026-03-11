@@ -104,6 +104,40 @@ body.base-theme {
     linear-gradient(180deg, #1b1715 0%, #151210 58%, #100d0c 100%);
 }
 
+body.base-theme.day {
+  --bg-primary: #1c1816;
+  --bg-secondary: #26211e;
+  --bg-card: #352f2b;
+  --bg-card-hover: #403834;
+  --text-primary: #eadfd5;
+  --text-secondary: #b9a79b;
+  --text-muted: #8a7a6e;
+  --accent: #b49578;
+  --accent-soft: rgba(180,149,120,0.15);
+  --border: rgba(180,149,120,0.2);
+
+  background:
+    radial-gradient(circle at 80% 20%, rgba(120,90,70,0.15), transparent 25%),
+    linear-gradient(180deg,#1f1a18 0%,#161210 100%);
+}
+
+body.base-theme.night {
+  --bg-primary: #12100f;
+  --bg-secondary: #191615;
+  --bg-card: #272221;
+  --bg-card-hover: #2f2a29;
+  --text-primary: #e8ddd3;
+  --text-secondary: #a99a8f;
+  --text-muted: #7b6e66;
+  --accent: #9e846b;
+  --accent-soft: rgba(158,132,107,0.12);
+  --border: rgba(158,132,107,0.18);
+
+  background:
+    radial-gradient(circle at 75% 15%, rgba(90,70,60,0.12), transparent 20%),
+    linear-gradient(180deg,#141211 0%,#0e0c0b 100%);
+}
+
 /* ── Time of Day Mood Adjustments ── */
 body.rainy.day,
 body.rainy.dawn,

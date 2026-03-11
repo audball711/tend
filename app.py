@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, flash
 import sqlite3
 from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
@@ -22,6 +23,7 @@ def inject_theme():
 
     weather = None
     theme_mode = "weather"
+    theme_class = "neutral"   # default so it always exists
 
     if settings:
         try:
@@ -35,8 +37,16 @@ def inject_theme():
                 settings["longitude"]
             )
 
+    # Determine time of day
+    hour = datetime.now().hour
+
+    if 6 <= hour < 18:
+        time_class = "day"
+    else:
+        time_class = "night"
+
     if theme_mode == "base":
-        theme_class = "base-theme"
+        theme_class = f"base-theme {time_class}"
     else:
         theme_class = weather["mood"] if weather else "neutral"
 
