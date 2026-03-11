@@ -10,10 +10,10 @@ CREATE TABLE settings (
     home_zip TEXT,
     latitude REAL,
     longitude REAL,
+    theme_mode TEXT DEFAULT 'weather'
 );
 
 INSERT INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);
-ALTER TABLE settings ADD COLUMN theme_mode TEXT DEFAULT 'weather';
 
 CREATE TABLE zones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

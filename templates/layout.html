@@ -12,7 +12,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body class="{% block page_class %}{% endblock %} {{ theme_class }}">      <h2>Tend</h2>
+<body class="{% block page_class %}{% endblock %} {{ theme_class }}">     
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <h2>Tend</h2>
       <p>A Hub for Garden Cultivation</p>
     </div>
 
@@ -20,7 +24,8 @@
       <a href="/">Home</a>
       <a href="/settings">Settings</a>
     </nav>
-  </header>
+  </div>
+</header>
 
   <main>
     {% with messages = get_flashed_messages() %}
