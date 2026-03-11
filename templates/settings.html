@@ -2,33 +2,69 @@
 
 {% block title %}Settings — Tend{% endblock %}
 
-{% block weather_mood %}neutral{% endblock %}
+{% block weather_mood %}settings{% endblock %}
 
 {% block content %}
-  <h1>Garden Settings</h1>
 
-  <p>Set your garden's location to enable weather forecasts across all your zones.</p>
+  <div class="settings-page">
 
-  {% if settings["home_zip"] %}
-    <p>Current ZIP: <strong>{{ settings["home_zip"] }}</strong></p>
-  {% else %}
-    <p>No location set yet.</p>
-  {% endif %}
+    <div class="settings-floral-bg" aria-hidden="true">
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+    </div>
 
-  <form method="post">
-    <label>
-      Home ZIP Code:
-      <input name="home_zip" 
-             placeholder="e.g., 06410" 
-             maxlength="5"
-             value="{{ settings['home_zip'] or '' }}" />
-    </label>
+    <div class="settings-card">
 
-    <br><br>
+      <div class="settings-header">
+        <h1>Location</h1>
+        <p class="page-subtitle">Garden record</p>
+      </div>
 
-    <button type="submit">Save</button>
-  </form>
+      <div class="settings-zip-display">
+        {% if settings["home_zip"] %}
+          <p class="settings-zip-label">Current garden zip</p>
+          <p class="settings-zip-value">{{ settings["home_zip"] }}</p>
+        {% else %}
+          <p class="settings-zip-label">Garden zip not yet set</p>
+          <p class="settings-zip-value">— — — — —</p>
+        {% endif %}
+      </div>
 
-  <p><a href="/">Back to home</a></p>
+     <form method="post" class="settings-form">
+  <label>
+    Update garden zip
+    <input
+      name="home_zip"
+      placeholder="e.g. 06410"
+      maxlength="5"
+      value="{{ settings['home_zip'] or '' }}"
+    />
+  </label>
+
+  <label>
+    Theme mode
+    <select name="theme_mode">
+      <option value="weather" {% if not settings or not settings["theme_mode"] or settings["theme_mode"] == "weather" %}selected{% endif %}>
+      Follow weather
+    </option>
+    <option value="base" {% if settings and settings["theme_mode"] == "base" %}selected{% endif %}>
+     Mushroom library
+    </option>
+    </select>
+  </label>
+
+  <button type="submit">Save settings</button>
+</form>
+
+      <p class="settings-back"><a href="/">← Back to garden</a></p>
+
+    </div>
+  </div>
 
 {% endblock %}

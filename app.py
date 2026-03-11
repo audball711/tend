@@ -11,9 +11,43 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+
+@app.context_processor
+def inject_theme():
+    db = get_db()
+
+    settings = db.execute(
+        "SELECT * FROM settings WHERE id = 1"
+    ).fetchone()
+
+    weather = None
+    theme_mode = "weather"
+
+    if settings:
+        try:
+            theme_mode = settings["theme_mode"] or "weather"
+        except (KeyError, IndexError):
+            theme_mode = "weather"
+
+        if settings["latitude"] and settings["longitude"]:
+            weather = get_weather_conditions(
+                settings["latitude"],
+                settings["longitude"]
+            )
+
+    if theme_mode == "base":
+        theme_class = "base-theme"
+    else:
+        theme_class = weather["mood"] if weather else "neutral"
+
+    db.close()
+    return dict(theme_class=theme_class)
+
+
 @app.route("/")
 def home():
     db = get_db()
+
     zones = db.execute(
         """
         SELECT
@@ -36,7 +70,7 @@ def home():
                 WHERE observations.zone_id = zones.id
                 ORDER BY created_at DESC
                 LIMIT 1 
-            )AS latest_note_date
+            ) AS latest_note_date
         FROM zones
         ORDER BY id DESC
         """
@@ -64,8 +98,11 @@ def home():
 
     db.close()
 
-    return render_template("home.html", zones=formatted_zones, weather=weather)
-
+    return render_template(
+        "home.html",
+        zones=formatted_zones,
+        weather=weather,
+    )
 @app.route("/zones/new", methods=["GET", "POST"])
 def zones_new():
     if request.method == "POST":
@@ -85,6 +122,7 @@ def zones_new():
             for error in errors:
                 flash(error)
             return redirect("/zones/new")
+           
 
         latitude, longitude = None, None
         if forecast_zip:
@@ -256,6 +294,7 @@ def settings():
 
     if request.method == "POST":
         home_zip = request.form.get("home_zip", "").strip() or None
+        theme_mode = request.form.get("theme_mode") or "weather"
 
         if home_zip and (not home_zip.isdigit() or len(home_zip) != 5):
             flash("ZIP code must be exactly 5 digits.")
@@ -272,8 +311,8 @@ def settings():
                 return redirect("/settings")
 
         db.execute(
-            "UPDATE settings SET home_zip = ?, latitude = ?, longitude = ? WHERE id = 1",
-            (home_zip, latitude, longitude)
+            "UPDATE settings SET home_zip = ?, latitude = ?, longitude = ?, theme_mode = ? WHERE id = 1",
+            (home_zip, latitude, longitude, theme_mode)
         )
         db.commit()
         db.close()
@@ -336,9 +375,6 @@ def zone_delete(zone_id):
 
     flash("Garden space deleted.")
     return redirect("/")
-
-
-
 
 
 

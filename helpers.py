@@ -7,6 +7,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def build_weather_message(mood, temp_high=None, humidity=None, wind_mph=None):
+    if mood == "rainy":
+        return "Rain arriving or damp conditions — watering is probably unnecessary today."
+
+    if mood == "sunny":
+        if temp_high is not None and temp_high >= 80:
+            return "Warm bright weather — check soil sooner, especially in sunnier spots."
+        return "Bright conditions today — a good day to check moisture before watering."
+
+    if mood == "cloudy":
+        if humidity is not None and humidity >= 75:
+            return "Cool cloudy air may slow drying — hold off watering until you check the soil."
+        return "Gentle cloudy weather — most beds may dry a little more slowly today."
+
+    return "Calm garden weather — check the soil first and water only if needed."
+
+
 def format_date(date_string):
     try:
         return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").strftime("%b %d, %Y")
@@ -60,13 +77,17 @@ def get_weather_conditions(latitude, longitude):
 
         if rain_expected:
             mood = "rainy"
-            message = "Rain expected within 24 hours. Good opportunity for planting or transplanting."
         elif avg_cloud > 60:
             mood = "cloudy"
-            message = "Cloudy skies ahead. Good conditions for garden work and transplanting."
         else:
             mood = "sunny"
-            message = "Clear skies expected. Great time to observe your garden."
+
+        message = build_weather_message(
+            mood,
+            temp_high=round(temp_high),
+            humidity=round(avg_humidity),
+            wind_mph=round(avg_wind)
+        )
 
         return {
             "mood": mood,
@@ -106,41 +127,62 @@ def get_ai_suggestions(zone_name, sun, zone_plants, observations, catalog_plants
         catalog_context = ""
         if catalog_plants:
             catalog_names = ", ".join([p["common_name"] for p in catalog_plants])
-            catalog_context = f"\nPlants available in the Tend catalog that match this zone's sun conditions: {catalog_names}\n"
+            catalog_context = (
+                f"Plants available in the Tend catalog that match this zone's sun conditions: "
+                f"{catalog_names}"
+            )
 
         weather_context = ""
         if weather and weather.get("temp_high"):
-            weather_context = f"""
-Current weather conditions:
+            weather_context = f"""Current weather conditions:
 - Temperature: {weather['temp_low']}°F low, {weather['temp_high']}°F high
 - Humidity: {weather['humidity']}%
 - Wind: {weather['wind_mph']} mph
 - Cloud cover: {weather['cloud_cover']}%
 - UV index: {weather['uv_index']}
-- Rain expected: {"yes" if weather['rain_expected'] else "no"}
-"""
+- Rain expected: {"yes" if weather['rain_expected'] else "no"}"""
 
-        prompt = f"""You are a knowledgeable garden assistant. Based on the following garden zone information, provide 2-3 specific, actionable suggestions.
+        prompt = f"""
+ROLE
+You are Tend, a calm and thoughtful garden companion.
 
-Zone: {zone_name}
+TASK
+Write ONE very short Tend Note about this garden zone.
+
+RULES
+- maximum 14 words
+- exactly 1 sentence
+- calm, observant, and natural
+- no lists
+- no extra explanation
+- no quotation marks
+- no commands
+
+CONTEXT
+Zone name: {zone_name}
 Sun exposure: {sun}
-Current plants: {plant_list}
+Plants growing here: {plant_list}
+
 {catalog_context}
+
 {weather_context}
+
 Recent observations:
 {observation_list}
 
-Respond with 2-3 short, practical suggestions. Where relevant, recommend specific plants from the Tend catalog. Each suggestion should be 1-2 sentences. Be specific to what was observed. Do not use bullet points or numbering — just separate suggestions with a blank line."""
+OUTPUT
+Return only the Tend Note sentence.
+"""
 
         client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=300,
+            max_tokens=30,
             messages=[{"role": "user", "content": prompt}]
         )
 
-        return message.content[0].text
+        return message.content[0].text.strip()
 
     except Exception as e:
         print(f"AI suggestions failed: {e}")

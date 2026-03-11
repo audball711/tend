@@ -2,77 +2,122 @@
 
 {% block title %}Tend{% endblock %}
 
-{% block weather_mood %}{{ weather.mood if weather else "neutral" }}{% endblock %}
+{% block page_class %}home-page{% endblock %}
+
 
 {% block content %}
-  <h1>Cultivate</h1>
-  <p>Welcome to Tend — your cultivation hub.</p>
+
+<section class="home-garden-board">
+
+  <div class="home-intro">
+    <div class="home-intro-copy">
+      <h1>Tend</h1>
+      <p>Your garden intelligence system</p>
+    </div>
+
+    <div class="home-intro-actions">
+      <a href="/zones/new" class="new-zone-link">+ New garden space</a>
+    </div>
+  </div>
 
   {% if weather %}
     <div class="weather-banner {{ weather.mood }}">
-      {% if weather.mood == "rainy" %}🌧{% else %}☀️{% endif %}
+      {% if weather.mood == "rainy" %}🌧
+      {% elif weather.mood == "cloudy" %}☁️
+      {% elif weather.mood == "sunny" %}☀️
+      {% else %}🌱
+      {% endif %}
       {{ weather.message }}
+
+      {% if weather.temp_high %}
+        <span class="weather-details">
+          {{ weather.temp_low }}°–{{ weather.temp_high }}°F
+          · {{ weather.humidity }}% humidity
+          · {{ weather.wind_mph }} mph wind
+        </span>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="weather-banner neutral">
+      🌱 <a href="/settings">Set your garden ZIP in Settings to get weather forecasts.</a>
     </div>
   {% endif %}
 
-  <p>
-    <a href="/zones/new">Create a garden space</a>
-  </p>
-
-  <h2>Your Garden Spaces</h2>
+  <div class="page-header">
+    <h2>Your Garden Spaces</h2>
+    <p class="page-meta">A living grid of zones, clusters, and conditions.</p>
+  </div>
 
   {% if zones|length == 0 %}
     <p>No garden spaces yet. Create one whenever you feel like it.</p>
   {% else %}
-    <div>
+    <div class="zone-grid">
       {% for z in zones %}
-        <details class="zone-card">
-          <summary>
-            <strong>{{ z["name"] }}</strong>
+        <article class="zone-card">
+          <div class="zone-card-inner">
 
-            {% if z["site_location"] %}
-              — {{ z["site_location"] }}
-            {% endif %}
+            <div class="zone-card-face zone-card-front">
+              <div>
+                <p class="zone-kicker">
+                  {% if z["sun"] %}
+                    {{ z["sun"] }} sun
+                  {% else %}
+                    Garden zone
+                  {% endif %}
+                </p>
 
-            {% if z["sun"] %}
-              ({{ z["sun"] }})
-            {% endif %}
+                <h3>{{ z["name"] }}</h3>
 
-            <br>
-            <small>Plants: {{ z["plant_count"] }}</small>
-          </summary>
+                <div class="zone-meta">
+                  {% if z["site_location"] %}{{ z["site_location"] }} · {% endif %}
+                  {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
+                </div>
 
-          <div class="zone-reveal">
-            <p><strong>Quick View</strong></p>
+                <div class="zone-tags">
+                  {% if z["site_location"] %}
+                    <span class="zone-tag">{{ z["site_location"] }}</span>
+                  {% endif %}
 
-            <p>
-              {% if z["plant_count"] == 0 %}
-                No plants added yet.
-              {% elif z["plant_count"] == 1 %}
-                1 plant in this space.
-              {% else %}
-                {{ z["plant_count"] }} plants in this space.
-              {% endif %}
-            </p>
+                  {% if z["sun"] %}
+                    <span class="zone-tag">{{ z["sun"] }} light</span>
+                  {% endif %}
 
-            {% if z["latest_note"] %}
-              <p><strong>Latest observation:</strong></p>
-              {% if z["latest_note_date"] %}
-                <p><small>{{ z["latest_note_date"] }}</small></p>
-              {% endif %}
-              <p>{{ z["latest_note"] }}</p>
-            {% else %}
-              <p><strong>Latest observation:</strong></p>
-              <p>No observations yet.</p>
-            {% endif %}
+                  <span class="zone-tag">
+                    {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
+                  </span>
+                </div>
+              </div>
 
-            <p>
-              <a href="/zones/{{ z['id'] }}">Open garden builder</a>
-            </p>
+              <div>
+                <a href="/zones/{{ z['id'] }}" class="enter-link">Enter garden</a>
+              </div>
+            </div>
+
+            <div class="zone-card-face zone-card-back">
+              <div>
+                <p class="zone-kicker">Latest observation</p>
+
+                {% if z["latest_note"] %}
+                  {% if z["latest_note_date"] %}
+                    <p><small>{{ z["latest_note_date"] }}</small></p>
+                  {% endif %}
+                  <p>{{ z["latest_note"] }}</p>
+                {% else %}
+                  <p>No observations yet. This space is ready for its first note.</p>
+                {% endif %}
+              </div>
+
+              <div>
+                <a href="/zones/{{ z['id'] }}" class="enter-link">Open zone →</a>
+              </div>
+            </div>
+
           </div>
-        </details>
+        </article>
       {% endfor %}
     </div>
   {% endif %}
+
+</section>
 
 {% endblock %}

@@ -2,21 +2,18 @@
 
 {% block title %}Zone Detail — Tend{% endblock %}
 
-{% block weather_mood %}{{ weather_conditions.mood if weather_conditions else "neutral" }}{% endblock %}
-
 {% block content %}
-  <h1>{{ zone["name"] }}</h1>
-
-  {% if zone["site_location"] %}
-    <p>Location: {{ zone["site_location"] }}</p>
-  {% endif %}
-
-  {% if zone["sun"] %}
-    <p>Sun: {{ zone["sun"] }}</p>
-  {% endif %}
-
-  <p><a href="/">Back to home</a></p>
-  <p><a href="/">Back to home</a> · <a href="/zones/{{ zone['id'] }}/edit">Edit zone</a></p>
+  <div class="page-header">
+    <h1>{{ zone["name"] }}</h1>
+    <p class="page-meta">
+      {% if zone["site_location"] %}{{ zone["site_location"] }}{% endif %}
+      {% if zone["site_location"] and zone["sun"] %} · {% endif %}
+      {% if zone["sun"] %}{{ zone["sun"] }} sun{% endif %}
+    </p>
+    <p class="page-meta">
+      <a href="/">← Home</a> · <a href="/zones/{{ zone['id'] }}/edit">Edit zone</a>
+    </p>
+  </div>
 
   <h2>Weather Conditions</h2>
   <div class="weather-banner {{ weather_conditions.mood }}">
@@ -37,55 +34,71 @@
     {% endif %}
   </div>
 
-  <h2>Plants in this space</h2>
+  {% if ai_suggestions %}
+  <section class="tend-notes-section">
+    <div class="tend-notes-card">
+      <p class="tend-notes-label">Tend Notes</p>
+      <div class="tend-notes-text">
+        {{ ai_suggestions }}
+      </div>
+    </div>
+  </section>
+{% endif %}
 
-  {% if zone_plants|length == 0 %}
-    <p>No plants added yet.</p>
-  {% else %}
-    <ul>
-      {% for zp in zone_plants %}
-        <li>
-          {% if zp["plant_type"] == "herb" %}🌿
-          {% elif zp["plant_type"] == "flower" %}🌸
-          {% elif zp["plant_type"] == "vegetable" %}🥕
-          {% elif zp["plant_type"] == "berry" %}🍓
-          {% elif zp["plant_type"] == "native grass" %}🌾
-          {% else %}🌱
-          {% endif %}
-          {{ zp["common_name"] }}
-          ({{ zp["quantity"] }})
-          <form method="post" action="/zone-plants/{{ zp['id'] }}/delete" style="display:inline;">
-            <button type="submit">Remove</button>
-          </form>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <section class="growing-here-section">
+    <h2>Growing Here</h2>
 
-  <h2>Add a Plant</h2>
+    {% if zone_plants|length == 0 %}
+      <p>No plants added yet.</p>
+    {% else %}
+      <div class="plant-clusters">
+        {% for zp in zone_plants %}
+          <div class="plant-chip">
+            <span class="plant-chip-name">
+              {% if zp["plant_type"] == "herb" %}🌿
+              {% elif zp["plant_type"] == "flower" %}🌸
+              {% elif zp["plant_type"] == "vegetable" %}🥕
+              {% elif zp["plant_type"] == "berry" %}🍓
+              {% elif zp["plant_type"] == "native grass" %}🌾
+              {% else %}🌱
+              {% endif %}
+              {{ zp["common_name"] }}
+            </span>
 
-  <form method="post" action="/zones/{{ zone['id'] }}/add-plant">
-    <label>
-      Choose plant:
-      <select name="plant_id" required>
-        <option value="">Select plant</option>
-        {% for p in plants %}
-          <option value="{{ p['id'] }}">{{ p["common_name"] }}</option>
+            <span class="plant-chip-qty">×{{ zp["quantity"] }}</span>
+
+            <form method="post" action="/zone-plants/{{ zp['id'] }}/delete">
+              <button type="submit" class="plant-chip-remove">Remove</button>
+            </form>
+          </div>
         {% endfor %}
-      </select>
-    </label>
+      </div>
+    {% endif %}
+  </section>
 
-    <br><br>
+  <section class="cultivate-section">
+    <h2>Cultivate</h2>
 
-    <label>
-      Quantity:
-      <input type="number" name="quantity" min="1" value="1">
-    </label>
+    <form method="post" action="/zones/{{ zone['id'] }}/add-plant" class="cultivate-form">
+      <label>
+        Choose plant:
+        <select name="plant_id" required>
+          <option value="">Select plant</option>
+          {% for p in plants %}
+            <option value="{{ p['id'] }}">{{ p["common_name"] }}</option>
+          {% endfor %}
+        </select>
+      </label>
 
-    <br><br>
+      <label>
+        Quantity:
+        <input type="number" name="quantity" min="1" value="1">
+      </label>
 
-    <button type="submit">Plant</button>
-  </form>
+      <button type="submit">+ Add Plant</button>
+    </form>
+  </section>
+
 
   <h2>Garden Observations</h2>
 
@@ -104,22 +117,12 @@
     <p>No notes yet.</p>
   {% else %}
     {% for obs in observations %}
-      <div>
-        <p><strong>{{ obs["created_at"] }}</strong></p>
-        <p>{{ obs["note"] }}</p>
-        <hr>
-      </div>
-    {% endfor %}
+    <div class="observation">
+      <strong>{{ obs["created_at"] }}</strong>
+      <p>{{ obs["note"] }}</p>
+    </div>
+  {% endfor %}
   {% endif %}
 
-  {% if ai_suggestions %}
-    <h2>Tend Intelligence</h2>
-    <details>
-      <summary>View garden suggestions</summary>
-      <div class="ai-suggestions">
-        {{ ai_suggestions }}
-      </div>
-    </details>
-  {% endif %}
 
 {% endblock %}
