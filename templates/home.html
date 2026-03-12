@@ -53,70 +53,30 @@
   {% else %}
     <div class="zone-grid">
       {% for z in zones %}
-        <article class="zone-card">
-          <div class="zone-card-inner">
+        <a href="/zones/{{ z['id'] }}" class="zone-card">
+          <div class="zone-kicker">Garden Space</div>
 
-            <div class="zone-card-face zone-card-front">
-              <div>
-                <p class="zone-kicker">
-                  {% if z["sun"] %}
-                    {{ z["sun"] }} sun
-                  {% else %}
-                    Garden zone
-                  {% endif %}
-                </p>
+          <h3>{{ z["name"] }}</h3>
 
-                <h3>{{ z["name"] }}</h3>
-
-                <div class="zone-meta">
-                  {% if z["site_location"] %}{{ z["site_location"] }} · {% endif %}
-                  {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
-                </div>
-
-                <div class="zone-tags">
-                  {% if z["site_location"] %}
-                    <span class="zone-tag">{{ z["site_location"] }}</span>
-                  {% endif %}
-
-                  {% if z["sun"] %}
-                    <span class="zone-tag">{{ z["sun"] }} light</span>
-                  {% endif %}
-
-                  <span class="zone-tag">
-                    {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <a href="/zones/{{ z['id'] }}" class="enter-link">Enter garden</a>
-              </div>
-            </div>
-
-            <div class="zone-card-face zone-card-back">
-              <div>
-                <p class="zone-kicker">Latest observation</p>
-
-                {% if z["latest_note"] %}
-                  {% if z["latest_note_date"] %}
-                    <p><small>{{ z["latest_note_date"] }}</small></p>
-                  {% endif %}
-                  <p>{{ z["latest_note"] }}</p>
-                {% else %}
-                  <p>No observations yet. This space is ready for its first note.</p>
-                {% endif %}
-              </div>
-
-              <div>
-                <a href="/zones/{{ z['id'] }}" class="enter-link">Open zone →</a>
-              </div>
-            </div>
-
+          <div class="zone-meta">
+            {% if z["site_location"] %}{{ z["site_location"] }} · {% endif %}
+            {% if z["sun"] %}{{ z["sun"] }} sun · {% endif %}
+            {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
           </div>
-        </article>
+
+          {% if z["latest_note"] %}
+            <p>{{ z["latest_note"] }}</p>
+          {% else %}
+            <p>No observations yet.</p>
+          {% endif %}
+
+          <div class="zone-card-footer">
+            <span class="zone-card-link">Enter garden →</span>
+          </div>
+        </a>
       {% endfor %}
     </div>
-  {% endif %}
+{% endif %}
 
 </section>
 

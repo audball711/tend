@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, flash
 import sqlite3
-from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions
+from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions, zip_to_town
 import os
 from datetime import datetime
 
@@ -331,8 +331,11 @@ def settings():
     current = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
     db.close()
 
-    return render_template("settings.html", settings=current)
+    town_name = None
+    if current and current["home_zip"]:
+        town_name = zip_to_town(current["home_zip"])
 
+    return render_template("settings.html", settings=current, town_name=town_name)
 
 @app.route("/zones/<int:zone_id>/edit", methods=["GET", "POST"])
 def zone_edit(zone_id):

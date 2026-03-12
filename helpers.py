@@ -37,7 +37,7 @@ def zip_to_latlon(zip_code):
         response = requests.get(url, headers={"User-Agent": "tend-app"}, timeout=5)
         results = response.json()
         if results:
-            return float(results[0]["lat"]), float(results[0]["lon"])
+            return float(results[0]["lat"]), float(results[0]["lon"]),
         return None, None
     except Exception as e:
         print(f"ZIP lookup failed: {e}")
@@ -186,4 +186,22 @@ Return only the Tend Note sentence.
 
     except Exception as e:
         print(f"AI suggestions failed: {e}")
+        return None
+    
+
+def zip_to_town(zip_code):
+    try:
+        url = f"https://nominatim.openstreetmap.org/search?postalcode={zip_code}&country=US&format=json"
+        response = requests.get(url, headers={"User-Agent": "tend-app"}, timeout=5)
+        results = response.json()
+
+        if results:
+            address = results[0].get("display_name", "")
+            parts = [part.strip() for part in address.split(",") if part.strip()]
+            if parts:
+                return parts[0]
+
+        return None
+    except Exception as e:
+        print(f"Town lookup failed: {e}")
         return None
