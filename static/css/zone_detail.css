@@ -1,0 +1,375 @@
+/* ============================================
+   Zone Detail Planner Layout
+   Retro Garden Journal
+   ============================================ */
+
+.zone-detail-page {
+  padding-bottom: 3rem;
+}
+
+.zone-page-header {
+  margin-bottom: 2.5rem;
+}
+
+.zone-weather-section {
+  margin-bottom: 2.75rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(159, 132, 88, 0.22);
+  text-align: center;
+}
+
+.zone-weather-section h2 {
+  font-size: 1.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8f7b60;
+}
+
+.zone-planner {
+  margin-top: 1rem;
+}
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
+  gap: 1.6rem;
+  align-items: start;
+}
+
+/* left main planner sheet */
+.planner-sheet {
+  position: relative;
+  background: #e9e0d2;
+  border: 1px solid rgba(159,132,88,0.22);
+  border-radius: 34px;
+  padding: 1.7rem;
+  box-shadow: 0 10px 24px rgba(60,44,24,0.08);
+}
+
+/* fake paper layer behind */
+.planner-sheet::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 36px;
+  background: #e1d6c6;
+  z-index: -1;
+  opacity: 0.65;
+}
+
+.planner-sheet,
+.rail-card,
+.rail-tool {
+  background-image:
+    radial-gradient(rgba(120,100,70,0.03) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* second sheet layer */
+.planner-sheet::after {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border-radius: 38px;
+  background: #d9cfbe;
+  z-index: -2;
+  opacity: 0.35;
+}
+
+.sheet-section + .sheet-section {
+  margin-top: 1.4rem;
+}
+
+.sheet-divider {
+  height: 1px;
+  margin: 1.5rem 0 0.2rem;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(176, 151, 110, 0.35),
+    transparent
+  );
+}
+
+/* right rail */
+.planner-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.rail-card,
+.rail-tool {
+  border: 1px solid rgba(159, 132, 88, 0.18);
+  border-radius: 28px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 20px rgba(60, 44, 24, 0.06);
+}
+
+.rail-card {
+  background: #e2d7c7;
+  border: 1px solid rgba(159,132,88,0.22);
+  border-radius: 28px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 22px rgba(60,44,24,0.08);
+}
+
+.rail-tool {
+  background: #e7ddcf;
+  border: 1px solid rgba(159,132,88,0.22);
+  border-radius: 28px;
+  padding: 1.25rem;
+  box-shadow: 0 6px 14px rgba(60,44,24,0.06);
+}
+
+/* headings */
+.section-heading {
+  margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+  margin: 0 0 0.3rem;
+  color: #4d4033;
+  font-family: var(--font-heading);
+}
+
+.section-heading h2::before {
+  content: "✿ ";
+  color: #b8914d;
+  opacity: 0.75;
+}
+
+.section-heading p {
+  margin: 0;
+  color: #7a6957;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  font-family: var(--font-ui);
+}
+
+.empty-state {
+  color: #7a6957;
+  margin: 0;
+}
+
+.empty-state,
+.ai-note-empty p {
+  font-family: var(--font-body);
+}
+
+/* ledger */
+.ledger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  border-top: 1px solid rgba(159,132,88,0.18);
+  padding-top: 0.7rem;
+}
+
+.ledger-entry,
+.ai-note {
+  border-radius: 20px;
+  padding: 1rem 1rem 1.05rem;
+  background: #f0e7d9;
+  border: 1px solid rgba(176, 151, 110, 0.18);
+  box-shadow: none;
+}
+
+.ledger-label {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9a7c52;
+}
+
+.ledger-entry p,
+.ai-note p {
+  margin: 0;
+  color: #5d5143;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.ai-note-empty p {
+  color: #8a7a67;
+}
+
+/* ai tool */
+.ai-trigger-form {
+  margin: 0 0 1rem;
+}
+
+.ai-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(176, 151, 110, 0.28);
+  background: #ead9b0;
+  color: #64502b;
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.ai-trigger:hover {
+  background: #e1cc99;
+  transform: translateY(-1px);
+}
+
+/* forms */
+.cultivate-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.cultivate-form label {
+  display: flex;
+  font-family: var(--font-ui);
+  flex-direction: column;
+  gap: 0.45rem;
+  color: #6f5d4b;
+}
+
+.cultivate-form select,
+.cultivate-form input,
+.cultivate-form textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(176, 151, 110, 0.28);
+  background: #fbf7f0;
+  color: #54493d;
+  font-family: var(--font-body);   /* handwritten */
+  font-size: 1.15rem;
+  line-height: 1.6;
+  box-shadow: none;
+}
+
+.cultivate-form textarea {
+  resize: vertical;
+  font-size: 1.2rem;
+}
+
+.cultivate-form textarea::placeholder,
+.cultivate-form input::placeholder {
+  opacity: 0.6;
+  font-family: var(--font-body);
+}
+
+.cultivate-form select:focus,
+.cultivate-form input:focus,
+.cultivate-form textarea:focus {
+  outline: none;
+  border-color: #c59c57;
+  background: #fffaf2;
+}
+
+.cultivate-form button {
+  justify-self: start;
+  min-height: 46px;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(176, 151, 110, 0.28);
+  background: #ead9b0;
+  color: #64502b;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.cultivate-form button:hover {
+  background: #e1cc99;
+  transform: translateY(-1px);
+}
+
+/* plant chips get a seed-packet softness */
+.plant-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid rgba(176, 151, 110, 0.28);
+  background: #f4ebde;
+  box-shadow: none;
+  font-family: var(--font-ui);
+}
+
+.plant-chip-name {
+  color: #54493d;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+}
+
+.plant-chip-qty {
+  color: #8a7358;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.plant-chip-remove {
+  border: none;
+  background: transparent;
+  color: #9a7c52;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+}
+
+.plant-chip-remove:hover {
+  color: #7f6440;
+}
+
+/* weather */
+
+
+.weather-banner .handwritten,
+.ledger-entry .handwritten,
+.ai-note .handwritten {
+  font-family: var(--font-body);
+}
+
+.weather-banner .handwritten {
+  font-size: 1.25rem;
+}
+
+.ledger-entry .handwritten,
+.ai-note .handwritten {
+  font-size: 1.15rem;
+}
+
+@media (max-width: 900px) {
+  .planner-grid {
+    grid-template-columns: 1fr;
+  }
+}

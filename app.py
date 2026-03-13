@@ -1,11 +1,12 @@
 from flask import Flask, redirect, render_template, request, flash
 import sqlite3
-from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions, zip_to_town
+from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions, get_town_name
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
+
 
 def get_db():
     conn = sqlite3.connect("instance/tend.db")
@@ -23,7 +24,7 @@ def inject_theme():
 
     weather = None
     theme_mode = "weather"
-    theme_class = "neutral"   # default so it always exists
+    theme_class = "neutral day"
 
     if settings:
         try:
@@ -37,21 +38,30 @@ def inject_theme():
                 settings["longitude"]
             )
 
-    # Determine time of day
     hour = datetime.now().hour
 
-    if 6 <= hour < 18:
+    if 6 <= hour < 9:
+        time_class = "dawn"
+    elif 9 <= hour < 17:
         time_class = "day"
+    elif 17 <= hour < 20:
+        time_class = "dusk"
     else:
         time_class = "night"
 
     if theme_mode == "base":
         theme_class = f"base-theme {time_class}"
+    elif theme_mode in ["sunny", "rainy", "cloudy", "neutral"]:
+        theme_class = f"{theme_mode} {time_class}"
     else:
-        theme_class = weather["mood"] if weather else "neutral"
+        if weather and weather.get("mood"):
+            theme_class = f"{weather['mood']} {time_class}"
+        else:
+            theme_class = f"neutral {time_class}"
 
     db.close()
     return dict(theme_class=theme_class)
+
 
 
 @app.route("/")
@@ -106,13 +116,26 @@ def home():
     if settings and settings["latitude"] and settings["longitude"]:
         weather = get_weather_conditions(settings["latitude"], settings["longitude"])
 
+    settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
+
+    town_name = None
+
+    if settings and settings["latitude"] and settings["longitude"]:
+        town_name = get_town_name(
+            settings["latitude"],
+            settings["longitude"]
+    )
+
     db.close()
 
     return render_template(
         "home.html",
         zones=formatted_zones,
         weather=weather,
+        town_name=town_name
     )
+
+
 @app.route("/zones/new", methods=["GET", "POST"])
 def zones_new():
     if request.method == "POST":
@@ -164,16 +187,16 @@ def zone_detail(zone_id):
     ).fetchall()
 
     zone_plants = db.execute(
-    """
-    SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
-    FROM zone_plants
-    JOIN plants ON zone_plants.plant_id = plants.id
-    WHERE zone_plants.zone_id = ?
-    ORDER BY plants.common_name
-    """,
-    (zone_id,)
-).fetchall()
-    
+        """
+        SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
+        FROM zone_plants
+        JOIN plants ON zone_plants.plant_id = plants.id
+        WHERE zone_plants.zone_id = ?
+        ORDER BY plants.common_name
+        """,
+        (zone_id,)
+    ).fetchall()
+
     observations = db.execute(
         """
         SELECT id, note, created_at
@@ -181,10 +204,8 @@ def zone_detail(zone_id):
         WHERE zone_id = ?
         ORDER BY created_at DESC
         """,
-        (zone_id,) 
+        (zone_id,)
     ).fetchall()
-
-    #date and time readability 
 
     formatted_observations = []
 
@@ -214,9 +235,103 @@ def zone_detail(zone_id):
     settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
 
     if settings and settings["latitude"] and settings["longitude"]:
-        weather_conditions = get_weather_conditions(settings["latitude"], settings["longitude"])
+        weather_conditions = get_weather_conditions(
+            settings["latitude"],
+            settings["longitude"]
+        )
     else:
-        weather_conditions = {"message": "Visit Settings to set your garden ZIP for weather forecasts.", "mood": "neutral"}
+        weather_conditions = {
+            "message": "Visit Settings to set your garden ZIP for weather forecasts.",
+            "mood": "neutral"
+        }
+
+    db.close()
+
+    ai_suggestions = None
+
+    return render_template(
+        "zone_detail.html",
+        zone=zone,
+        plants=plants,
+        zone_plants=zone_plants,
+        observations=formatted_observations,
+        suggested_plants=suggested_plants,
+        weather_conditions=weather_conditions,
+        ai_suggestions=ai_suggestions
+    )
+
+
+@app.route("/zones/<int:zone_id>/suggestion", methods=["POST"])
+def zone_detail_suggestion(zone_id):
+    db = get_db()
+
+    zone = db.execute(
+        "SELECT * FROM zones WHERE id = ?",
+        (zone_id,)
+    ).fetchone()
+
+    plants = db.execute(
+        "SELECT id, common_name FROM plants ORDER BY common_name"
+    ).fetchall()
+
+    zone_plants = db.execute(
+        """
+        SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
+        FROM zone_plants
+        JOIN plants ON zone_plants.plant_id = plants.id
+        WHERE zone_plants.zone_id = ?
+        ORDER BY plants.common_name
+        """,
+        (zone_id,)
+    ).fetchall()
+
+    observations = db.execute(
+        """
+        SELECT id, note, created_at
+        FROM observations 
+        WHERE zone_id = ?
+        ORDER BY created_at DESC
+        """,
+        (zone_id,)
+    ).fetchall()
+
+    formatted_observations = []
+
+    for obs in observations:
+        formatted_observations.append({
+            "id": obs["id"],
+            "note": obs["note"],
+            "created_at": format_date(obs["created_at"])
+        })
+
+    suggested_plants = []
+
+    if zone["sun"]:
+        suggested_plants = db.execute(
+            """
+            SELECT id, common_name, plant_type, sun
+            FROM plants
+            WHERE sun = ?
+            AND id NOT IN (
+                SELECT plant_id FROM zone_plants WHERE zone_id = ?
+            )
+            ORDER BY plant_type, common_name
+            """,
+            (zone["sun"], zone_id)
+        ).fetchall()
+
+    settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
+
+    if settings and settings["latitude"] and settings["longitude"]:
+        weather_conditions = get_weather_conditions(
+            settings["latitude"],
+            settings["longitude"]
+        )
+    else:
+        weather_conditions = {
+            "message": "Visit Settings to set your garden ZIP for weather forecasts.",
+            "mood": "neutral"
+        }
 
     db.close()
 
@@ -229,14 +344,16 @@ def zone_detail(zone_id):
         weather_conditions if isinstance(weather_conditions, dict) and "temp_high" in weather_conditions else None
     )
 
-    return render_template("zone_detail.html", 
-                           zone=zone, 
-                           plants=plants,
-                           zone_plants=zone_plants,
-                           observations=formatted_observations,
-                           suggested_plants=suggested_plants,
-                           weather_conditions=weather_conditions,
-                           ai_suggestions=ai_suggestions)
+    return render_template(
+        "zone_detail.html",
+        zone=zone,
+        plants=plants,
+        zone_plants=zone_plants,
+        observations=formatted_observations,
+        suggested_plants=suggested_plants,
+        weather_conditions=weather_conditions,
+        ai_suggestions=ai_suggestions
+    )
 
 @app.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
@@ -312,6 +429,8 @@ def settings():
             return redirect("/settings")
 
         latitude, longitude = None, None
+        town_name = None
+
         if home_zip:
             latitude, longitude = zip_to_latlon(home_zip)
 
@@ -320,9 +439,15 @@ def settings():
                 db.close()
                 return redirect("/settings")
 
+            town_name = get_town_name(latitude, longitude)
+
         db.execute(
-            "UPDATE settings SET home_zip = ?, latitude = ?, longitude = ?, theme_mode = ? WHERE id = 1",
-            (home_zip, latitude, longitude, theme_mode)
+            """
+            UPDATE settings
+            SET home_zip = ?, latitude = ?, longitude = ?, theme_mode = ?, town_name = ?
+            WHERE id = 1
+            """,
+            (home_zip, latitude, longitude, theme_mode, town_name)
         )
         db.commit()
         db.close()
@@ -331,9 +456,7 @@ def settings():
     current = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
     db.close()
 
-    town_name = None
-    if current and current["home_zip"]:
-        town_name = zip_to_town(current["home_zip"])
+    town_name = current["town_name"] if current else None
 
     return render_template("settings.html", settings=current, town_name=town_name)
 

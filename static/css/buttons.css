@@ -1,0 +1,160 @@
+/* ============================================
+   Buttons + Action Links
+   ============================================ */
+
+button,
+.new-zone-link,
+.enter-link {
+  font-family: var(--font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Base Button ── */
+button {
+  align-self: flex-start;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+}
+
+/* ── Danger / Confirm Buttons ── */
+button[onclick*="confirm"] {
+  background: rgba(200, 80, 60, 0.08);
+  border-color: rgba(200, 80, 60, 0.3);
+  color: #e8a090;
+}
+
+button[onclick*="confirm"]:hover {
+  background: rgba(200, 80, 60, 0.2);
+  color: #f0b0a0;
+}
+
+/* ── Primary Action Link ── */
+.new-zone-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.8rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(194, 154, 164, 0.22);
+
+  background: #744b58;
+  color: #f3e7e2;
+
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.12);
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.new-zone-link:hover {
+  background: #825463;
+  border-color: rgba(216, 183, 191, 0.28);
+  transform: translateY(-2px);
+}
+/* ── Small Inline Remove Button ── */
+.plant-chip-remove {
+  align-self: center;
+  min-height: auto;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  font-size: 0.68rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.plant-chip-remove:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── List Item Tiny Buttons ── */
+ul li form button {
+  padding: 2px var(--spacing-sm);
+  font-size: 0.75rem;
+}
+
+
+
+.new-zone-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--accent);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    box-shadow var(--transition-fast);
+    margin-top: 0.8rem;
+}
+
+.new-zone-link:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.plant-chip-remove {
+  align-self: center;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.68rem;
+  min-height: auto;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.plant-chip-remove:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--accent);
+  color: var(--accent);
+}

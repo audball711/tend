@@ -1,0 +1,112 @@
+/* ── Forms ── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-shell form,
+.settings-form,
+.zone-form {
+  max-width: 100%;
+}
+
+.settings-form select {
+  background: #2a2022;
+  border: 1px solid rgba(176, 107, 126, 0.16);
+  color: #f0e6df;
+  text-align: center;
+  font-size: 1rem;
+  border-radius: 18px;
+  min-height: 60px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.02),
+    0 10px 24px rgba(0,0,0,0.10);
+}
+
+.settings-form select:focus {
+  border-color: rgba(176, 107, 126, 0.42);
+  background: #312527;
+  outline: none;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  align-self: flex-start;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+button:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+button[onclick*="confirm"] {
+  border-color: rgba(200, 80, 60, 0.3);
+  color: #e8a090;
+  background: rgba(200, 80, 60, 0.08);
+}
+
+button[onclick*="confirm"]:hover {
+  background: rgba(200, 80, 60, 0.2);
+  color: #f0b0a0;
+}

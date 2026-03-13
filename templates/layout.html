@@ -7,17 +7,29 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Agu+Display&family=The+Girl+Next+Door&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Agu+Display&family=The+Girl+Next+Door&display=swap"
+    rel="stylesheet"
+  >
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-
 <body class="{% block page_class %}{% endblock %} {{ theme_class or 'neutral' }}">
+
+  <div class="weather-layer" aria-hidden="true"></div>
+
   <header>
     <div class="header-inner">
+      
+      
       <div class="header-brand">
-        <h2>Tend</h2>
-        <p>A Hub for Garden Cultivation</p>
+        <h2>
+          Tend
+          {% if town_name %}
+            <span class="header-location">— {{ town_name }}</span>
+          {% endif %}
+        </h2>
+          <p>Your garden intelligence system</p>
       </div>
 
       <nav>

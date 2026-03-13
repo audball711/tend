@@ -1,0 +1,383 @@
+/* ============================================
+   Variables + Theme Palettes
+   ============================================ */
+
+:root {
+  --font-heading: "Agu Display", serif;
+  --font-body: "The Girl Next Door", cursive;
+  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --spacing-xs: 0.4rem;
+  --spacing-sm: 0.8rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 5rem;
+
+  --radius: 10px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  --transition-slow: 1.5s ease;
+  --transition-med: 0.4s ease;
+  --transition-fast: 0.2s ease;
+}
+
+
+/* ── Settings Theme ── */
+body.settings {
+  --bg-primary: #171615;
+  --bg-secondary: #211e1d;
+  --bg-card: rgba(42, 34, 31, 0.88);
+  --bg-card-hover: rgba(50, 41, 37, 0.94);
+
+  --text-primary: #efe4da;
+  --text-secondary: #c8b3a6;
+  --text-muted: #9b877d;
+
+  --accent: #b18673;
+  --accent-soft: rgba(177, 134, 115, 0.14);
+
+  --border: rgba(177, 134, 115, 0.20);
+  --weather-bg: rgba(177, 134, 115, 0.08);
+
+  background:
+    radial-gradient(circle at 78% 16%, rgba(158, 112, 88, 0.14), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(122, 109, 88, 0.10), transparent 20%),
+    radial-gradient(circle at 50% 0%, rgba(255, 241, 220, 0.04), transparent 22%),
+    linear-gradient(180deg, #221d1b 0%, #171615 58%, #110f0e 100%);
+}
+
+
+/* ── Mood Palettes ── */
+body.sunny {
+  --bg-primary: #f5f1dc;
+  --bg-secondary: #dfe8c8;
+  --bg-card: rgba(244, 239, 217, 0.90);
+  --bg-card-hover: rgba(248, 243, 224, 0.97);
+  --text-primary: #2f4026;
+  --text-secondary: #526746;
+  --text-muted: #7f936d;
+  --accent: #d1ab4a;
+  --accent-soft: rgba(209, 171, 74, 0.16);
+  --border: rgba(157, 178, 108, 0.28);
+  --weather-bg: rgba(255, 240, 190, 0.45);
+
+  background:
+    radial-gradient(circle at 50% 6%, rgba(255, 248, 220, 0.92), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 226, 160, 0.18), transparent 20%),
+    linear-gradient(180deg, #fffdf4 0%, #eef5db 42%, #dce8c3 100%);
+}
+
+body.rainy {
+  --bg-primary: #141e1f;
+  --bg-secondary: #1c2b2d;
+  --bg-card: rgba(34, 48, 52, 0.88);
+  --bg-card-hover: rgba(42, 58, 62, 0.94);
+  --text-primary: #ddeaec;
+  --text-secondary: #89aeb3;
+  --text-muted: #526e72;
+  --accent: #7ab8c0;
+  --accent-soft: rgba(122, 184, 192, 0.15);
+  --border: rgba(122, 184, 192, 0.2);
+  --weather-bg: rgba(122, 184, 192, 0.12);
+
+  background:
+    radial-gradient(circle at 20% 14%, rgba(145, 193, 203, 0.10), transparent 20%),
+    radial-gradient(circle at 75% 16%, rgba(92, 138, 147, 0.14), transparent 24%),
+    linear-gradient(180deg, #31484c 0%, #203336 55%, #182729 100%);
+}
+
+body.cloudy {
+  --bg-primary: #1c2125;
+  --bg-secondary: #252c31;
+  --bg-card: rgba(40, 47, 52, 0.88);
+  --bg-card-hover: rgba(48, 56, 61, 0.94);
+  --text-primary: #dde3e6;
+  --text-secondary: #a0adb5;
+  --text-muted: #6b7880;
+  --accent: #aab8c0;
+  --accent-soft: rgba(170, 184, 192, 0.14);
+  --border: rgba(170, 184, 192, 0.18);
+  --weather-bg: rgba(170, 184, 192, 0.10);
+
+  background:
+    radial-gradient(circle at 50% 10%, rgba(223, 230, 234, 0.08), transparent 26%),
+    radial-gradient(circle at 12% 18%, rgba(171, 183, 191, 0.08), transparent 22%),
+    linear-gradient(180deg, #4c5961 0%, #364149 50%, #262f35 100%);
+}
+
+body.neutral {
+  --bg-primary: #171d16;
+  --bg-secondary: #1f271e;
+  --bg-card: rgba(42, 52, 40, 0.88);
+  --bg-card-hover: rgba(50, 62, 47, 0.94);
+  --text-primary: #dde3d8;
+  --text-secondary: #96a690;
+  --text-muted: #5e6b59;
+  --accent: #7a9468;
+  --accent-soft: rgba(122, 148, 104, 0.15);
+  --border: rgba(122, 148, 104, 0.2);
+  --weather-bg: rgba(122, 148, 104, 0.1);
+
+  background:
+    radial-gradient(circle at 78% 16%, rgba(130, 152, 115, 0.10), transparent 20%),
+    radial-gradient(circle at 18% 14%, rgba(108, 120, 96, 0.08), transparent 20%),
+    linear-gradient(180deg, #283126 0%, #1d241c 55%, #141914 100%);
+}
+
+body.base-theme {
+  --bg-primary: #1b1718;
+  --bg-secondary: #262122;
+  --bg-card: rgba(58, 51, 52, 0.92);
+  --bg-card-hover: rgba(70, 61, 63, 0.98);
+  --text-primary: #f0e6de;
+  --text-secondary: #cab8b1;
+  --text-muted: #9d8d89;
+  --accent: #a27683;
+  --accent-soft: rgba(162, 118, 131, 0.15);
+  --border: rgba(181, 156, 161, 0.20);
+  --weather-bg: rgba(162, 118, 131, 0.10);
+
+  background:
+    radial-gradient(circle at 78% 18%, rgba(126, 94, 108, 0.16), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(122, 108, 98, 0.12), transparent 20%),
+    linear-gradient(180deg, #201b1c 0%, #171314 58%, #120f10 100%);
+}
+
+
+/* ── Time of Day Mood Adjustments ── */
+body.rainy.day,
+body.rainy.dawn,
+body.rainy.dusk {
+  background:
+    radial-gradient(circle at 20% 14%, rgba(145, 193, 203, 0.10), transparent 20%),
+    radial-gradient(circle at 75% 16%, rgba(92, 138, 147, 0.14), transparent 24%),
+    linear-gradient(180deg, #31484c 0%, #203336 55%, #182729 100%);
+}
+
+body.rainy.night {
+  --bg-primary: #0d1416;
+  --bg-secondary: #131d20;
+  --bg-card: rgba(29, 43, 47, 0.90);
+  --bg-card-hover: rgba(38, 54, 59, 0.96);
+  --text-primary: #dce8ea;
+  --text-secondary: #86a7ad;
+  --text-muted: #4f666b;
+  --accent: #79aeba;
+  --accent-soft: rgba(121, 174, 186, 0.15);
+  --border: rgba(121, 174, 186, 0.22);
+  --weather-bg: rgba(121, 174, 186, 0.08);
+
+  background:
+    radial-gradient(circle at 50% 10%, rgba(120, 150, 170, 0.08), transparent 30%),
+    linear-gradient(180deg, #11181b 0%, #0d1416 55%, #0a1012 100%);
+}
+
+body.cloudy.night,
+body.neutral.night {
+  --bg-card: rgba(42, 48, 40, 0.90);
+  --bg-card-hover: rgba(50, 57, 47, 0.96);
+
+  background:
+    radial-gradient(circle at 50% 8%, rgba(210, 218, 222, 0.05), transparent 24%),
+    linear-gradient(180deg, #141916 0%, #101411 55%, #0b0f0c 100%);
+}
+
+body.sunny.dawn {
+  background:
+    radial-gradient(circle at top center, rgba(255, 236, 188, 0.95), transparent 28%),
+    radial-gradient(circle at 80% 18%, rgba(255, 210, 140, 0.14), transparent 20%),
+    linear-gradient(180deg, #fff7e8 0%, #f0efd7 48%, #dce8c3 100%);
+}
+
+body.sunny.day {
+  background:
+    radial-gradient(circle at 50% 6%, rgba(255, 248, 220, 0.92), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 226, 160, 0.18), transparent 20%),
+    linear-gradient(180deg, #fffdf4 0%, #eef5db 42%, #dce8c3 100%);
+}
+
+body.sunny.dusk {
+  background:
+    radial-gradient(circle at top center, rgba(255, 221, 170, 0.72), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(232, 170, 108, 0.14), transparent 20%),
+    linear-gradient(180deg, #f5ecd9 0%, #e8e2c8 45%, #d6dfc0 100%);
+}
+
+body.sunny.night {
+  --bg-primary: #151a14;
+  --bg-secondary: #1b2219;
+  --bg-card: rgba(44, 49, 39, 0.90);
+  --bg-card-hover: rgba(53, 59, 47, 0.96);
+  --text-primary: #e5e0c7;
+  --text-secondary: #b2b08f;
+  --text-muted: #7e8367;
+  --accent: #c1a35c;
+  --accent-soft: rgba(193, 163, 92, 0.12);
+  --border: rgba(193, 163, 92, 0.18);
+  --weather-bg: rgba(193, 163, 92, 0.08);
+
+  background:
+    radial-gradient(circle at top center, rgba(255, 226, 150, 0.08), transparent 25%),
+    linear-gradient(180deg, #181d16 0%, #131711 55%, #0e120d 100%);
+}
+
+body.base-theme.night {
+  --bg-primary: #12100f;
+  --bg-secondary: #191615;
+  --bg-card: #272221;
+  --bg-card-hover: #2f2a29;
+  --text-primary: #e8ddd3;
+  --text-secondary: #a99a8f;
+  --text-muted: #7b6e66;
+  --accent: #9e846b;
+  --accent-soft: rgba(158,132,107,0.12);
+  --border: rgba(158,132,107,0.18);
+
+  background:
+    radial-gradient(circle at 75% 15%, rgba(90,70,60,0.12), transparent 20%),
+    linear-gradient(180deg, #141211 0%, #0e0c0b 100%);
+}
+
+
+
+/* ── Night Sky Sparkle Layer ── */
+
+body.night {
+  position: relative;
+}
+
+/* large sparkle layer */
+body.night::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    radial-gradient(3px 3px at 20px 30px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(2px 2px at 90px 120px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(2px 2px at 160px 40px, rgba(255,240,190,0.9), transparent),
+    radial-gradient(4px 4px at 300px 200px, rgba(255,240,190,0.8), transparent),
+    radial-gradient(3px 3px at 500px 100px, rgba(255,255,255,0.7), transparent);
+
+  background-repeat: repeat;
+  background-size: 600px 600px;
+
+  animation: star-layer-1 120s linear infinite;
+}
+
+/* second sparkle layer */
+body.night::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    radial-gradient(2px 2px at 40px 60px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(2px 2px at 200px 150px, rgba(255,240,190,0.9), transparent),
+    radial-gradient(3px 3px at 350px 80px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 420px 260px, rgba(255,240,190,0.8), transparent);
+
+  background-repeat: repeat;
+  background-size: 700px 700px;
+
+  animation: star-layer-2 180s linear infinite;
+}
+
+
+@keyframes sky-glow-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(120px);
+  }
+}
+
+
+
+
+
+/* extremely slow drift creates twinkle illusion */
+@keyframes star-layer-1 {
+  from { transform: translateY(0); }
+  to { transform: translateY(-40px); }
+}
+
+@keyframes star-layer-2 {
+  from { transform: translateX(0); }
+  to { transform: translateX(60px); }
+}
+
+
+
+
+
+
+
+/* ── Cloud Drift ── */
+body.cloudy .cloud-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.24;
+  background-image:
+    radial-gradient(circle at 18% 24%, rgba(255,255,255,0.08), transparent 16%),
+    radial-gradient(circle at 62% 18%, rgba(255,255,255,0.06), transparent 18%),
+    radial-gradient(circle at 86% 28%, rgba(255,255,255,0.05), transparent 14%);
+  animation: cloud-drift 70s linear infinite;
+}
+
+body.cloudy.night .cloud-layer {
+  opacity: 0.18;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(120px);
+  }
+}
+
+
+/* ── Header Mood Tint ── */
+body.sunny header {
+  background: rgba(255, 244, 210, 0.18);
+  border-bottom-color: rgba(209, 171, 74, 0.24);
+}
+
+body.rainy header {
+  background: rgba(24, 39, 42, 0.42);
+  border-bottom-color: rgba(122, 184, 192, 0.22);
+}
+
+body.cloudy header,
+body.neutral header {
+  background: rgba(26, 31, 26, 0.34);
+  border-bottom-color: rgba(150, 166, 144, 0.18);
+}
+
+body.base-theme header {
+  background: rgba(28, 22, 20, 0.34);
+  border-bottom-color: rgba(167, 137, 109, 0.18);
+}
+
+body.settings header {
+  background: rgba(31, 22, 25, 0.34);
+  border-bottom-color: rgba(176, 107, 126, 0.18);
+}
+
+body.base-theme.night::before {
+  opacity: 0.9;
+}
+
+body.base-theme.night::after {
+  opacity: 0.6;
+}

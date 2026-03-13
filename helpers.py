@@ -147,11 +147,10 @@ ROLE
 You are Tend, a calm and thoughtful garden companion.
 
 TASK
-Write ONE very short Tend Note about this garden zone.
+Write a short Tend Note about this garden zone that gives insightful suggestions. 
 
 RULES
-- maximum 14 words
-- exactly 1 sentence
+- maximum 30 words
 - calm, observant, and natural
 - no lists
 - no extra explanation
@@ -171,14 +170,14 @@ Recent observations:
 {observation_list}
 
 OUTPUT
-Return only the Tend Note sentence.
+Return only the Tend Note.
 """
 
         client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=30,
+            max_tokens=75,
             messages=[{"role": "user", "content": prompt}]
         )
 
@@ -188,20 +187,40 @@ Return only the Tend Note sentence.
         print(f"AI suggestions failed: {e}")
         return None
     
+    
 
-def zip_to_town(zip_code):
+# town name 
+
+def get_town_name(lat, lon):
     try:
-        url = f"https://nominatim.openstreetmap.org/search?postalcode={zip_code}&country=US&format=json"
-        response = requests.get(url, headers={"User-Agent": "tend-app"}, timeout=5)
-        results = response.json()
+        url = "https://nominatim.openstreetmap.org/reverse"
 
-        if results:
-            address = results[0].get("display_name", "")
-            parts = [part.strip() for part in address.split(",") if part.strip()]
-            if parts:
-                return parts[0]
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "format": "json",
+            "zoom": 10
+        }
 
-        return None
-    except Exception as e:
-        print(f"Town lookup failed: {e}")
+        headers = {
+            "User-Agent": "tend-garden-app"
+        }
+
+        r = requests.get(url, params=params, headers=headers, timeout=5)
+
+        if r.status_code != 200:
+            return None
+
+        data = r.json()
+
+        address = data.get("address", {})
+
+        return (
+            address.get("town")
+            or address.get("city")
+            or address.get("village")
+            or address.get("hamlet")
+        )
+
+    except Exception:
         return None

@@ -1,68 +1,67 @@
 {% extends "layout.html" %}
 
 {% block title %}Settings — Tend{% endblock %}
+{% block page_class %}settings{% endblock %}
 
 {% block content %}
+<section class="settings-page">
 
-  <div class="settings-page">
+  <div class="settings-floral-bg" aria-hidden="true">
+    <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+  </div>
 
-    <div class="settings-floral-bg" aria-hidden="true">
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
-      <span>✿</span><span>❀</span><span>✾</span><span>❁</span>
+  <div class="settings-card">
+    <div class="settings-header">
+      <h1>Garden Settings</h1>
     </div>
 
-    <div class="settings-card">
-      <div class="settings-header">
-        <h1>Location</h1>
-        <p class="page-subtitle">Garden record</p>
+    <div class="settings-location-display">
+      <div class="settings-location-label">Garden Location</div>
+
+      <div class="settings-location-value">
+        {{ town_name if town_name else "Set Garden Location" }}
       </div>
 
-    <div class="settings-location-display">
-      <p class="settings-location-label">Garden location</p>
-
-    {% if town_name %}
-      <p class="settings-location-value">{{ town_name }}</p>
-      {% if settings["home_zip"] %}
-        <p class="settings-location-subtle">ZIP {{ settings["home_zip"] }}</p>
+      {% if settings and settings["home_zip"] %}
+        <div class="settings-location-subtle">
+          ZIP {{ settings["home_zip"] }}
+        </div>
       {% endif %}
-  {% else %}
-    <p class="settings-location-value">Not set yet</p>
-  {% endif %}
-</div>
+    </div>
 
-  <form method="post" class="settings-form">
-    <label>
-    Update garden zip
-    <input
-      name="home_zip"
-      placeholder="e.g. 06410"
-      maxlength="5"
-      value="{{ settings['home_zip'] or '' }}"
-    />
-  </label>
+    <div class="settings-divider"></div>
 
-  <label>
-    Theme mode
+    <form method="post" class="settings-form">
+      <label>
+        Update garden zip
+        <input
+          name="home_zip"
+          placeholder="e.g. 06322"
+          maxlength="5"
+          value="{{ settings['home_zip'] if settings and settings['home_zip'] else '' }}"
+        />
+      </label>
+
+<label>
+  Color Palette
+  <span class="select-wrap">
     <select name="theme_mode">
-      <option value="weather" {% if not settings or not settings["theme_mode"] or settings["theme_mode"] == "weather" %}selected{% endif %}>
-       Weather Palette
-    </option>
-    <option value="base" {% if settings and settings["theme_mode"] == "base" %}selected{% endif %}>
-     Mushroom Palette
-    </option>
+      <option value="weather" {% if not settings or not settings["theme_mode"] or settings["theme_mode"] == "weather" %}selected{% endif %}>Weather Tracking</option>
+      <option value="sunny" {% if settings and settings["theme_mode"] == "sunny" %}selected{% endif %}>Sunny</option>
+      <option value="rainy" {% if settings and settings["theme_mode"] == "rainy" %}selected{% endif %}>Rainy</option>
+      <option value="cloudy" {% if settings and settings["theme_mode"] == "cloudy" %}selected{% endif %}>Cloudy</option>
+      <option value="neutral" {% if settings and settings["theme_mode"] == "neutral" %}selected{% endif %}>Green</option>
+      <option value="base" {% if settings and settings["theme_mode"] == "base" %}selected{% endif %}>Mushroom</option>
     </select>
-  </label>
+  </span>
+</label>
 
-    <button type="submit">Save settings</button>
-  </form>
-    
-    <p class="settings-back"><a href="/">← Back to garden</a></p>
+      <button type="submit">Save settings</button>
+    </form>
+
+    <p class="settings-back">
+      <a href="/">← Back to garden</a>
+    </p>
   </div>
-</div>
+</section>
 {% endblock %}

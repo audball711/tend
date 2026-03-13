@@ -1,0 +1,510 @@
+/* =====================================================
+   Zone Cards
+   Single-Side Clickable Card
+   ===================================================== */
+
+.zone-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px;
+  padding: 1.5rem;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  list-style: none;
+  text-decoration: none;
+
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.18),
+    0 4px 10px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.zone-card:hover,
+.zone-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 20px 36px rgba(0,0,0,0.24),
+    0 6px 14px rgba(0,0,0,0.10);
+}
+
+.zone-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.zone-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.zone-kicker {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.zone-card h3 {
+  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
+  line-height: 1.1;
+  margin: 0;
+  color: inherit;
+}
+
+.zone-card .zone-meta {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.zone-card p {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.zone-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.zone-tag {
+  font-family: var(--font-ui);
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.zone-card-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.zone-card-link {
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.85;
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.zone-card-stat {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* -------------------------------------
+   Mushroom / Base Theme Special Invert
+   ------------------------------------- */
+
+body.base-theme .zone-card,
+body.base-theme.day .zone-card,
+body.base-theme.night .zone-card {
+  background: #f3ebe6;
+  color: #4b3533;
+  border: 1px solid rgba(90, 60, 65, 0.18);
+}
+
+body.base-theme .zone-kicker,
+body.base-theme.day .zone-kicker,
+body.base-theme.night .zone-kicker {
+  color: #8b716b;
+}
+
+body.base-theme .zone-card .zone-meta,
+body.base-theme.day .zone-card .zone-meta,
+body.base-theme.night .zone-card .zone-meta {
+  color: #7a625d;
+}
+
+body.base-theme .zone-card p,
+body.base-theme.day .zone-card p,
+body.base-theme.night .zone-card p {
+  color: #6a514c;
+}
+
+body.base-theme .zone-tag,
+body.base-theme.day .zone-tag,
+body.base-theme.night .zone-tag {
+  background: rgba(255,255,255,0.04);
+  color: #7a625d;
+  border: 1px solid rgba(90, 60, 65, 0.14);
+}
+
+body.base-theme .zone-card-link,
+body.base-theme.day .zone-card-link,
+body.base-theme.night .zone-card-link {
+  color: #a06d7c;
+}
+
+body.base-theme .zone-card-stat,
+body.base-theme.day .zone-card-stat,
+body.base-theme.night .zone-card-stat {
+  color: #8b716b;
+}
+
+body.base-theme .zone-card:hover,
+body.base-theme .zone-card:focus-visible,
+body.base-theme.day .zone-card:hover,
+body.base-theme.day .zone-card:focus-visible,
+body.base-theme.night .zone-card:hover,
+body.base-theme.night .zone-card:focus-visible {
+  background: #4a3a3a;
+  color: #f3ebe6;
+  border-color: rgba(220, 196, 200, 0.28);
+}
+
+body.base-theme .zone-card:hover .zone-kicker,
+body.base-theme .zone-card:focus-visible .zone-kicker,
+body.base-theme.day .zone-card:hover .zone-kicker,
+body.base-theme.day .zone-card:focus-visible .zone-kicker,
+body.base-theme.night .zone-card:hover .zone-kicker,
+body.base-theme.night .zone-card:focus-visible .zone-kicker {
+  color: rgba(243, 235, 230, 0.70);
+}
+
+body.base-theme .zone-card:hover h3,
+body.base-theme .zone-card:focus-visible h3,
+body.base-theme.day .zone-card:hover h3,
+body.base-theme.day .zone-card:focus-visible h3,
+body.base-theme.night .zone-card:hover h3,
+body.base-theme.night .zone-card:focus-visible h3 {
+  color: #f3ebe6;
+}
+
+body.base-theme .zone-card:hover .zone-meta,
+body.base-theme .zone-card:focus-visible .zone-meta,
+body.base-theme.day .zone-card:hover .zone-meta,
+body.base-theme.day .zone-card:focus-visible .zone-meta,
+body.base-theme.night .zone-card:hover .zone-meta,
+body.base-theme.night .zone-card:focus-visible .zone-meta {
+  color: rgba(243, 235, 230, 0.78);
+}
+
+body.base-theme .zone-card:hover p,
+body.base-theme .zone-card:focus-visible p,
+body.base-theme.day .zone-card:hover p,
+body.base-theme.day .zone-card:focus-visible p,
+body.base-theme.night .zone-card:hover p,
+body.base-theme.night .zone-card:focus-visible p {
+  color: rgba(243, 235, 230, 0.88);
+}
+
+body.base-theme .zone-card:hover .zone-tag,
+body.base-theme .zone-card:focus-visible .zone-tag,
+body.base-theme.day .zone-card:hover .zone-tag,
+body.base-theme.day .zone-card:focus-visible .zone-tag,
+body.base-theme.night .zone-card:hover .zone-tag,
+body.base-theme.night .zone-card:focus-visible .zone-tag {
+  color: rgba(243, 235, 230, 0.82);
+  border-color: rgba(243, 235, 230, 0.16);
+}
+
+body.base-theme .zone-card:hover .zone-card-link,
+body.base-theme .zone-card:focus-visible .zone-card-link,
+body.base-theme.day .zone-card:hover .zone-card-link,
+body.base-theme.day .zone-card:focus-visible .zone-card-link,
+body.base-theme.night .zone-card:hover .zone-card-link,
+body.base-theme.night .zone-card:focus-visible .zone-card-link {
+  color: #e7cbd2;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+body.base-theme .zone-card:hover .zone-card-stat,
+body.base-theme .zone-card:focus-visible .zone-card-stat,
+body.base-theme.day .zone-card:hover .zone-card-stat,
+body.base-theme.day .zone-card:focus-visible .zone-card-stat,
+body.base-theme.night .zone-card:hover .zone-card-stat,
+body.base-theme.night .zone-card:focus-visible .zone-card-stat {
+  color: rgba(243, 235, 230, 0.68);
+}
+
+/* -------------------------------------
+   Rainy Theme Cards
+   ------------------------------------- */
+
+body.rainy .zone-card {
+  background: rgba(223, 234, 236, 0.92);
+  color: #284046;
+  border: 1px solid rgba(122, 184, 192, 0.20);
+}
+
+body.rainy .zone-kicker {
+  color: #6f8f95;
+}
+
+body.rainy .zone-card .zone-meta,
+body.rainy .zone-card p,
+body.rainy .zone-tag,
+body.rainy .zone-card-stat {
+  color: #4f6d73;
+}
+
+body.rainy .zone-tag {
+  background: rgba(122, 184, 192, 0.10);
+  border-color: rgba(122, 184, 192, 0.16);
+}
+
+body.rainy .zone-card-link {
+  color: #6eaeb7;
+}
+
+body.rainy .zone-card:hover,
+body.rainy .zone-card:focus-visible {
+  background: #32494d;
+  color: #e7f0f2;
+  border-color: rgba(160, 210, 218, 0.26);
+}
+
+body.rainy .zone-card:hover .zone-kicker,
+body.rainy .zone-card:focus-visible .zone-kicker,
+body.rainy .zone-card:hover .zone-meta,
+body.rainy .zone-card:focus-visible .zone-meta,
+body.rainy .zone-card:hover p,
+body.rainy .zone-card:focus-visible p,
+body.rainy .zone-card:hover .zone-tag,
+body.rainy .zone-card:focus-visible .zone-tag,
+body.rainy .zone-card:hover .zone-card-stat,
+body.rainy .zone-card:focus-visible .zone-card-stat {
+  color: rgba(231, 240, 242, 0.86);
+}
+
+body.rainy .zone-card:hover .zone-tag,
+body.rainy .zone-card:focus-visible .zone-tag {
+  border-color: rgba(231, 240, 242, 0.16);
+}
+
+body.rainy .zone-card:hover .zone-card-link,
+body.rainy .zone-card:focus-visible .zone-card-link {
+  color: #bfe0e5;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* -------------------------------------
+   Cloudy Theme Cards
+   ------------------------------------- */
+
+body.cloudy .zone-card {
+  background: rgba(235, 239, 241, 0.92);
+  color: #3a464c;
+  border: 1px solid rgba(170, 184, 192, 0.20);
+}
+
+body.cloudy .zone-kicker {
+  color: #7d8b92;
+}
+
+body.cloudy .zone-card .zone-meta,
+body.cloudy .zone-card p,
+body.cloudy .zone-tag,
+body.cloudy .zone-card-stat {
+  color: #5d6b72;
+}
+
+body.cloudy .zone-tag {
+  background: rgba(170, 184, 192, 0.10);
+  border-color: rgba(170, 184, 192, 0.16);
+}
+
+body.cloudy .zone-card-link {
+  color: #8fa3ae;
+}
+
+body.cloudy .zone-card:hover,
+body.cloudy .zone-card:focus-visible {
+  background: #4a5860;
+  color: #eef3f5;
+  border-color: rgba(204, 214, 220, 0.24);
+}
+
+body.cloudy .zone-card:hover .zone-kicker,
+body.cloudy .zone-card:focus-visible .zone-kicker,
+body.cloudy .zone-card:hover .zone-meta,
+body.cloudy .zone-card:focus-visible .zone-meta,
+body.cloudy .zone-card:hover p,
+body.cloudy .zone-card:focus-visible p,
+body.cloudy .zone-card:hover .zone-tag,
+body.cloudy .zone-card:focus-visible .zone-tag,
+body.cloudy .zone-card:hover .zone-card-stat,
+body.cloudy .zone-card:focus-visible .zone-card-stat {
+  color: rgba(238, 243, 245, 0.86);
+}
+
+body.cloudy .zone-card:hover .zone-tag,
+body.cloudy .zone-card:focus-visible .zone-tag {
+  border-color: rgba(238, 243, 245, 0.16);
+}
+
+body.cloudy .zone-card:hover .zone-card-link,
+body.cloudy .zone-card:focus-visible .zone-card-link {
+  color: #d5e0e5;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* -------------------------------------
+   Sunny Theme Cards
+   ------------------------------------- */
+
+body.sunny .zone-card {
+  background: rgba(250, 245, 225, 0.95);
+  color: #4f4a2f;
+  border: 1px solid rgba(209, 171, 74, 0.18);
+}
+
+body.sunny .zone-kicker {
+  color: #9c8752;
+}
+
+body.sunny .zone-card .zone-meta,
+body.sunny .zone-card p,
+body.sunny .zone-tag,
+body.sunny .zone-card-stat {
+  color: #746742;
+}
+
+body.sunny .zone-tag {
+  background: rgba(209, 171, 74, 0.10);
+  border-color: rgba(209, 171, 74, 0.16);
+}
+
+body.sunny .zone-card-link {
+  color: #c49a3d;
+}
+
+body.sunny .zone-card:hover,
+body.sunny .zone-card:focus-visible {
+  background: #7c6a3f;
+  color: #fff8e7;
+  border-color: rgba(240, 214, 146, 0.28);
+}
+
+body.sunny .zone-card:hover .zone-kicker,
+body.sunny .zone-card:focus-visible .zone-kicker,
+body.sunny .zone-card:hover .zone-meta,
+body.sunny .zone-card:focus-visible .zone-meta,
+body.sunny .zone-card:hover p,
+body.sunny .zone-card:focus-visible p,
+body.sunny .zone-card:hover .zone-tag,
+body.sunny .zone-card:focus-visible .zone-tag,
+body.sunny .zone-card:hover .zone-card-stat,
+body.sunny .zone-card:focus-visible .zone-card-stat {
+  color: rgba(255, 248, 231, 0.86);
+}
+
+body.sunny .zone-card:hover .zone-tag,
+body.sunny .zone-card:focus-visible .zone-tag {
+  border-color: rgba(255, 248, 231, 0.18);
+}
+
+body.sunny .zone-card:hover .zone-card-link,
+body.sunny .zone-card:focus-visible .zone-card-link {
+  color: #ffe2a0;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* -------------------------------------
+   Neutral Theme Cards
+   ------------------------------------- */
+
+body.neutral .zone-card {
+  background: rgba(234, 239, 230, 0.94);
+  color: #3e4a39;
+  border: 1px solid rgba(122, 148, 104, 0.18);
+}
+
+body.neutral .zone-kicker {
+  color: #718067;
+}
+
+body.neutral .zone-card .zone-meta,
+body.neutral .zone-card p,
+body.neutral .zone-tag,
+body.neutral .zone-card-stat {
+  color: #5b6a53;
+}
+
+body.neutral .zone-tag {
+  background: rgba(122, 148, 104, 0.10);
+  border-color: rgba(122, 148, 104, 0.16);
+}
+
+body.neutral .zone-card-link {
+  color: #7d936b;
+}
+
+body.neutral .zone-card:hover,
+body.neutral .zone-card:focus-visible {
+  background: #465540;
+  color: #edf3e8;
+  border-color: rgba(172, 194, 160, 0.24);
+}
+
+body.neutral .zone-card:hover .zone-kicker,
+body.neutral .zone-card:focus-visible .zone-kicker,
+body.neutral .zone-card:hover .zone-meta,
+body.neutral .zone-card:focus-visible .zone-meta,
+body.neutral .zone-card:hover p,
+body.neutral .zone-card:focus-visible p,
+body.neutral .zone-card:hover .zone-tag,
+body.neutral .zone-card:focus-visible .zone-tag,
+body.neutral .zone-card:hover .zone-card-stat,
+body.neutral .zone-card:focus-visible .zone-card-stat {
+  color: rgba(237, 243, 232, 0.86);
+}
+
+body.neutral .zone-card:hover .zone-tag,
+body.neutral .zone-card:focus-visible .zone-tag {
+  border-color: rgba(237, 243, 232, 0.18);
+}
+
+body.neutral .zone-card:hover .zone-card-link,
+body.neutral .zone-card:focus-visible .zone-card-link {
+  color: #d5e1cc;
+  opacity: 1;
+  transform: translateX(4px);
+}

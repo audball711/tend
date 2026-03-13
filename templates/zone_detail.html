@@ -3,126 +3,177 @@
 {% block title %}Zone Detail — Tend{% endblock %}
 
 {% block content %}
-  <div class="page-header">
-    <h1>{{ zone["name"] }}</h1>
-    <p class="page-meta">
-      {% if zone["site_location"] %}{{ zone["site_location"] }}{% endif %}
-      {% if zone["site_location"] and zone["sun"] %} · {% endif %}
-      {% if zone["sun"] %}{{ zone["sun"] }} sun{% endif %}
-    </p>
-    <p class="page-meta">
-      <a href="/">← Home</a> · <a href="/zones/{{ zone['id'] }}/edit">Edit zone</a>
-    </p>
+<div class="page-shell zone-detail-page">
+
+  <div class="page-header zone-page-header">
+    <div class="zone-page-header-copy">
+      <h1>{{ zone["name"] }}</h1>
+      <p class="page-meta">
+        {% if zone["site_location"] %}{{ zone["site_location"] }}{% endif %}
+        {% if zone["site_location"] and zone["sun"] %} · {% endif %}
+        {% if zone["sun"] %}{{ zone["sun"] }} sun{% endif %}
+      </p>
+      <p class="page-meta">
+        <a href="/">← Home</a> · <a href="/zones/{{ zone['id'] }}/edit">Edit zone</a>
+      </p>
+    </div>
   </div>
 
-  <h2>Weather Conditions</h2>
-  <div class="weather-banner {{ weather_conditions.mood }}">
-    {% if weather_conditions.mood == "rainy" %}🌧
-    {% elif weather_conditions.mood == "cloudy" %}☁️
-    {% elif weather_conditions.mood == "sunny" %}☀️
-    {% else %}🌱
-    {% endif %}
-    {{ weather_conditions["message"] }}
+  <section class="zone-weather-section">
+    <h2>Weather Conditions</h2>
+    <div class="weather-banner {{ weather_conditions.mood }}">
+      {% if weather_conditions.mood == "rainy" %}🌧
+      {% elif weather_conditions.mood == "cloudy" %}☁️
+      {% elif weather_conditions.mood == "sunny" %}☀️
+      {% else %}🌱
+      {% endif %}
+      {{ weather_conditions["message"] }}
 
-    {% if weather_conditions.temp_high %}
-      <span class="weather-details">
-        {{ weather_conditions.temp_low }}°–{{ weather_conditions.temp_high }}°F
-        · {{ weather_conditions.humidity }}% humidity
-        · UV {{ weather_conditions.uv_index }}
-        · {{ weather_conditions.wind_mph }} mph wind
-      </span>
-    {% endif %}
-  </div>
-
-  {% if ai_suggestions %}
-  <section class="tend-notes-section">
-    <div class="tend-notes-card">
-      <p class="tend-notes-label">Tend Notes</p>
-      <div class="tend-notes-text">
-        {{ ai_suggestions }}
-      </div>
+      {% if weather_conditions.temp_high %}
+        <span class="weather-details">
+          {{ weather_conditions.temp_low }}°–{{ weather_conditions.temp_high }}°F
+          · {{ weather_conditions.humidity }}% humidity
+          · UV {{ weather_conditions.uv_index }}
+          · {{ weather_conditions.wind_mph }} mph wind
+        </span>
+      {% endif %}
     </div>
   </section>
-{% endif %}
 
-  <section class="growing-here-section">
-    <h2>Growing Here</h2>
+  <section class="zone-planner">
+    <div class="planner-grid">
 
-    {% if zone_plants|length == 0 %}
-      <p>No plants added yet.</p>
-    {% else %}
-      <div class="plant-clusters">
-        {% for zp in zone_plants %}
-          <div class="plant-chip">
-            <span class="plant-chip-name">
-              {% if zp["plant_type"] == "herb" %}🌿
-              {% elif zp["plant_type"] == "flower" %}🌸
-              {% elif zp["plant_type"] == "vegetable" %}🥕
-              {% elif zp["plant_type"] == "berry" %}🍓
-              {% elif zp["plant_type"] == "native grass" %}🌾
-              {% else %}🌱
-              {% endif %}
-              {{ zp["common_name"] }}
+      <section class="planner-sheet">
+        <div class="sheet-section">
+          <div class="section-heading">
+            <h2>Growing Here</h2>
+            <p>Your current plants and companions in this zone.</p>
+          </div>
+
+          {% if zone_plants|length == 0 %}
+            <p class="empty-state">No plants added yet.</p>
+          {% else %}
+            <div class="plant-clusters">
+              {% for zp in zone_plants %}
+                <div class="plant-chip">
+                  <span class="plant-chip-name">
+                    {% if zp["plant_type"] == "herb" %}🌿
+                    {% elif zp["plant_type"] == "flower" %}🌸
+                    {% elif zp["plant_type"] == "vegetable" %}🥕
+                    {% elif zp["plant_type"] == "berry" %}🍓
+                    {% elif zp["plant_type"] == "native grass" %}🌾
+                    {% else %}🌱
+                    {% endif %}
+                    {{ zp["common_name"] }}
+                  </span>
+
+                  <span class="plant-chip-qty">×{{ zp["quantity"] }}</span>
+
+                  <form method="post" action="/zone-plants/{{ zp['id'] }}/delete">
+                    <button type="submit" class="plant-chip-remove">Remove</button>
+                  </form>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="sheet-divider"></div>
+
+        <div class="sheet-section">
+          <div class="section-heading">
+            <h2>Cultivate</h2>
+            <p>Add plants to this garden space.</p>
+          </div>
+
+          <form method="post" action="/zones/{{ zone['id'] }}/add-plant" class="cultivate-form">
+            <label>
+              Choose plant
+              <span class="select-wrap">
+              <select name="plant_id" required>
+                <option value="">Select plant</option>
+                {% for p in plants %}
+                  <option value="{{ p['id'] }}">{{ p["common_name"] }}</option>
+                {% endfor %}
+              </select>
             </span>
+          </label>
 
-            <span class="plant-chip-qty">×{{ zp["quantity"] }}</span>
+            <label>
+              Quantity
+              <input type="number" name="quantity" min="1" value="1">
+            </label>
 
-            <form method="post" action="/zone-plants/{{ zp['id'] }}/delete">
-              <button type="submit" class="plant-chip-remove">Remove</button>
-            </form>
+            <button type="submit">+ Add Plant</button>
+          </form>
+        </div>
+
+        <div class="sheet-divider"></div>
+
+        <div class="sheet-section">
+          <div class="section-heading">
+            <h2>Add Observation</h2>
+            <p>Log what you noticed today.</p>
+          </div>
+
+          <form method="post" action="/zones/{{ zone['id'] }}/add-observation" class="cultivate-form">
+            <label>
+              Observation
+              <textarea name="note" rows="4" placeholder="What did you notice?" required></textarea>
+            </label>
+
+            <button type="submit">Save</button>
+          </form>
+        </div>
+      </section>
+
+      <aside class="planner-rail">
+  <section class="rail-tool ai-tool">
+    <div class="section-heading">
+      <h2>Suggestion Corner</h2>
+      <p>Surface a seasonal care note for this garden zone.</p>
+    </div>
+
+    <form method="post" action="/zones/{{ zone['id'] }}/suggestion" class="ai-trigger-form">
+      <button type="submit" class="ai-trigger">
+        ✦ Get Tend Insight
+      </button>
+    </form>
+
+    {% if ai_suggestions %}
+      <div class="ai-note">
+        <p>{{ ai_suggestions }}</p>
+      </div>
+    {% else %}
+      <div class="ai-note ai-note-empty">
+        <p>No suggestion loaded yet. Use the suggestion engine when you want guidance for this zone.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="rail-card ledger-card">
+    <div class="section-heading">
+      <h2>Tend Ledger</h2>
+      <p>Observations, memory, and seasonal notes for this zone.</p>
+    </div>
+
+    {% if observations|length == 0 %}
+      <p class="empty-state">No notes yet.</p>
+    {% else %}
+      <div class="ledger-list">
+        {% for obs in observations %}
+          <div class="ledger-entry">
+            <strong class="ledger-label">{{ obs["created_at"] }}</strong>
+            <p>{{ obs["note"] }}</p>
           </div>
         {% endfor %}
       </div>
     {% endif %}
   </section>
+</aside>
 
-  <section class="cultivate-section">
-    <h2>Cultivate</h2>
-
-    <form method="post" action="/zones/{{ zone['id'] }}/add-plant" class="cultivate-form">
-      <label>
-        Choose plant:
-        <select name="plant_id" required>
-          <option value="">Select plant</option>
-          {% for p in plants %}
-            <option value="{{ p['id'] }}">{{ p["common_name"] }}</option>
-          {% endfor %}
-        </select>
-      </label>
-
-      <label>
-        Quantity:
-        <input type="number" name="quantity" min="1" value="1">
-      </label>
-
-      <button type="submit">+ Add Plant</button>
-    </form>
+    </div>
   </section>
 
-
-  <h2>Garden Observations</h2>
-
-  <form method="post" action="/zones/{{ zone['id'] }}/add-observation">
-    <label>
-      Observation:
-      <textarea name="note" rows="4" cols="50" placeholder="What did you notice?" required></textarea>
-    </label>
-
-    <br><br>
-
-    <button type="submit">Save</button>
-  </form>
-
-  {% if observations|length == 0 %}
-    <p>No notes yet.</p>
-  {% else %}
-    {% for obs in observations %}
-    <div class="observation">
-      <strong>{{ obs["created_at"] }}</strong>
-      <p>{{ obs["note"] }}</p>
-    </div>
-  {% endfor %}
-  {% endif %}
-
-
+</div>
 {% endblock %}

@@ -1,0 +1,129 @@
+@import url("variables.css");
+@import url("type.css");
+@import url("layout.css");
+@import url("buttons.css");
+@import url("forms.css");
+@import url("zone_detail.css");
+@import url("weather.css");
+@import url("zone-cards.css");
+@import url("settings.css");
+@import url("utilities.css");
+
+
+
+/* ============================================
+   Custom Selects
+   ============================================ */
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+.select-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  width: 0.72rem;
+  height: 0.46rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: #8f724a;
+  opacity: 0.85;
+}
+
+.select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  width: 100%;
+  padding: 0.9rem 2.4rem 0.9rem 1rem;
+
+  border-radius: 16px;
+  border: 1px solid rgba(176,151,110,0.28);
+
+  background: #fbf7f0;
+  color: #54493d;
+
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+
+  line-height: 1.6;
+
+  box-shadow: none;
+}
+
+/* hide old IE arrow */
+.select-wrap select::-ms-expand {
+  display: none;
+}
+
+/* planner/garden form selects */
+.cultivate-form select,
+.settings-form select,
+.settings-row select,
+.zone-form-wrap select,
+form select {
+  border-radius: 16px;
+  border: 1px solid rgba(176, 151, 110, 0.28);
+  background: #fbf7f0;
+  color: #54493d;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  box-shadow: none;
+}
+
+.cultivate-form select:focus,
+.settings-form select:focus,
+.settings-row select:focus,
+.zone-form-wrap select:focus,
+form select:focus {
+  outline: none;
+  border-color: #c59c57;
+  background: #fffaf2;
+}
+
+/* dropdown menu items */
+select option {
+  background: #e8decf;
+  color: #54493d;
+}
+
+/* ============================================
+   Garden Location Line
+   ============================================ */
+
+.garden-location {
+  margin-top: .2rem;
+
+  font-family: var(--font-ui);
+
+  font-size: .68rem;
+
+  letter-spacing: .22em;
+
+  text-transform: uppercase;
+
+  color: #8f7b60;
+}
+
+.tagline {
+  margin-top: .35rem;
+  font-size: .95rem;
+  color: var(--text-muted);
+}

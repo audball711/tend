@@ -4,48 +4,46 @@
 
 {% block page_class %}home-page{% endblock %}
 
-
 {% block content %}
 
 <section class="home-garden-board">
 
-  <div class="home-intro">
-    <div class="home-intro-copy">
-      <h1>Tend</h1>
-      <p>Your garden intelligence system</p>
-    </div>
-
-    <div class="home-intro-actions">
-      <a href="/zones/new" class="new-zone-link">+ New garden space</a>
-    </div>
+  <div class="home-intro-copy">
+    <h1>Tend</h1>
+      <p class="tagline">Garden Cultivation Hub</p>
   </div>
 
   {% if weather %}
-    <div class="weather-banner {{ weather.mood }}">
+  <div class="home-weather">
+
+    <div class="home-weather-message">
       {% if weather.mood == "rainy" %}🌧
       {% elif weather.mood == "cloudy" %}☁️
       {% elif weather.mood == "sunny" %}☀️
       {% else %}🌱
       {% endif %}
-      {{ weather.message }}
 
-      {% if weather.temp_high %}
-        <span class="weather-details">
-          {{ weather.temp_low }}°–{{ weather.temp_high }}°F
-          · {{ weather.humidity }}% humidity
-          · {{ weather.wind_mph }} mph wind
-        </span>
-      {% endif %}
+      <span class="handwritten">{{ weather.message }}</span>
     </div>
-  {% else %}
-    <div class="weather-banner neutral">
-      🌱 <a href="/settings">Set your garden ZIP in Settings to get weather forecasts.</a>
-    </div>
-  {% endif %}
 
-  <div class="page-header">
-    <h2>Your Garden Spaces</h2>
-    <p class="page-meta">A living grid of zones, clusters, and conditions.</p>
+    {% if weather.temp_high %}
+      <div class="home-weather-details">
+        {{ weather.temp_low }}°–{{ weather.temp_high }}°F
+        · {{ weather.humidity }}% humidity
+        · {{ weather.wind_mph }} mph wind
+      </div>
+    {% endif %}
+
+  </div>
+{% endif %}
+
+  <div class="garden-section-header">
+    <div class="garden-section-title">
+      <h2>Your Garden Spaces</h2>
+      <p>A living grid of zones, plants, and conditions.</p>
+    </div>
+
+    <a href="/zones/new" class="new-zone-link">+ New Garden Space</a>
   </div>
 
   {% if zones|length == 0 %}
@@ -54,21 +52,23 @@
     <div class="zone-grid">
       {% for z in zones %}
         <a href="/zones/{{ z['id'] }}" class="zone-card">
-          <div class="zone-kicker">Garden Space</div>
+          <div class="zone-card-top">
+            <div class="zone-kicker">Garden Space</div>
 
-          <h3>{{ z["name"] }}</h3>
+            <h3>{{ z["name"] }}</h3>
 
-          <div class="zone-meta">
-            {% if z["site_location"] %}{{ z["site_location"] }} · {% endif %}
-            {% if z["sun"] %}{{ z["sun"] }} sun · {% endif %}
-            {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
+            <div class="zone-meta">
+              {% if z["site_location"] %}{{ z["site_location"] }} · {% endif %}
+              {% if z["sun"] %}{{ z["sun"] }} sun · {% endif %}
+              {{ z["plant_count"] }} plant{{ "s" if z["plant_count"] != 1 else "" }}
+            </div>
+
+            {% if z["latest_note"] %}
+              <p>{{ z["latest_note"] }}</p>
+            {% else %}
+              <p>No observations yet.</p>
+            {% endif %}
           </div>
-
-          {% if z["latest_note"] %}
-            <p>{{ z["latest_note"] }}</p>
-          {% else %}
-            <p>No observations yet.</p>
-          {% endif %}
 
           <div class="zone-card-footer">
             <span class="zone-card-link">Enter garden →</span>
@@ -76,7 +76,7 @@
         </a>
       {% endfor %}
     </div>
-{% endif %}
+  {% endif %}
 
 </section>
 

@@ -5,34 +5,36 @@
 {% block weather_mood %}neutral{% endblock %}
 
 {% block content %}
- <div class="page-header">
+<div class="page-header">
   <h1>New Space</h1>
   <p class="page-subtitle">Add a garden zone to Tend</p>
 </div>
 
-  <form method="post">
-    <label>
-      Zone name:
-      <input name="name" placeholder="e.g., Kitchen Herb Box" required />
-    </label>
+<form method="post">
+  <label>
+    Zone name:
+    <input name="name" placeholder="e.g., Kitchen Herb Box" required />
+  </label>
 
-    <label>
-      Site Location:
-      <input name="site_location" placeholder="e.g., By the back shed" />
-    </label>
+  <label>
+    Site Location:
+    <input name="site_location" placeholder="e.g., By the back shed" />
+  </label>
 
-    <label>
-      Sun Exposure:
-      <select name="sun">
+  <label>
+    Sun Exposure:
+    <span class="select-wrap">
+      <select name="sun_exposure">
         <option value="">(choose one)</option>
         <option value="full">Full</option>
         <option value="partial">Partial</option>
         <option value="shade">Shade</option>
       </select>
-    </label>
+    </span>
+  </label>
 
-    <button type="submit">Create</button>
-  </form>
+  <button type="submit">Create</button>
+</form>
 
-  <p><a href="/">Back to home</a></p>
+<p><a href="/">Back to home</a></p>
 {% endblock %}
