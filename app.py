@@ -9,6 +9,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
 
 
 def get_db():
+    os.makedirs("instance", exist_ok=True)
     conn = sqlite3.connect("instance/tend.db")
     conn.row_factory = sqlite3.Row
     return conn
