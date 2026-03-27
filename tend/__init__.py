@@ -9,13 +9,8 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
 
-
-# -- DB STRUCTURE AND PLANT DATA -- 
-
     init_db()
     seed_plants()
-
-# -- CONTEXT PROCESSOR --
 
     @app.context_processor
     def inject_theme():
@@ -23,9 +18,9 @@ def create_app():
         theme_class = build_theme_class(settings, weather)
         return dict(theme_class=theme_class)
 
-    from . import routes as routes
+    from .routes import bp
+    app.register_blueprint(bp)
 
     return app
-
 
 app = create_app()

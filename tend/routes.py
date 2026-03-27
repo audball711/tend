@@ -1,22 +1,22 @@
 # -- IMPORTS -- 
 
-from flask import redirect, render_template, request, flash
+from flask import redirect, render_template, request, flash, Blueprint
 
-from . import app
 from .helpers import get_ai_suggestions
 from .db import get_db, get_zone_or_none, get_settings
 from .page_context import build_zone_detail_context, build_home_context, update_zone_from_form
 from .weather_theme import update_settings_from_form
 
+bp = Blueprint("main", __name__)
 
 # -- ROUTE FOR HOME PAGE AND NEW ZONE -- 
 
-@app.route("/")
+@bp.route("/")
 def home():
     context = build_home_context()
     return render_template("home.html", **context)
 
-@app.route("/zones/new", methods=["GET", "POST"])
+@bp.route("/zones/new", methods=["GET", "POST"])
 def zones_new():
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -42,7 +42,7 @@ def zones_new():
 # -- ROUTE FOR ZONE DETAIL -- 
 
 
-@app.route("/zones/<int:zone_id>")
+@bp.route("/zones/<int:zone_id>")
 def zone_detail(zone_id):
     context = build_zone_detail_context(zone_id)
 
@@ -71,7 +71,7 @@ def zone_detail(zone_id):
 
 # -- ROUTES FOR ZONE ACTIONS -- 
 
-@app.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
+@bp.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
 
     zone = get_zone_or_none(zone_id)
@@ -99,7 +99,7 @@ def add_plant_to_zone(zone_id):
 
     return redirect(f"/zones/{zone_id}")
 
-@app.route("/zone-plants/<int:id>/delete", methods=["POST"])
+@bp.route("/zone-plants/<int:id>/delete", methods=["POST"])
 def delete_zone_plant(id):
 
     db = get_db()
@@ -126,7 +126,7 @@ def delete_zone_plant(id):
 
     return redirect(f"/zones/{row['zone_id']}")
 
-@app.route("/zones/<int:zone_id>/add-observation", methods=["POST"])
+@bp.route("/zones/<int:zone_id>/add-observation", methods=["POST"])
 def add_observation(zone_id):
     zone = get_zone_or_none(zone_id)
     if zone is None:
@@ -149,7 +149,7 @@ def add_observation(zone_id):
 
 # -- ROUTE FOR SETTINGS -- 
 
-@app.route("/settings", methods=["GET", "POST"])
+@bp.route("/settings", methods=["GET", "POST"])
 def settings():
     if request.method == "POST":
         error = update_settings_from_form(request.form)
@@ -164,7 +164,7 @@ def settings():
 
 # -- ROUTES FOR ZONE EDITING -- 
 
-@app.route("/zones/<int:zone_id>/edit", methods=["GET", "POST"])
+@bp.route("/zones/<int:zone_id>/edit", methods=["GET", "POST"])
 def zone_edit(zone_id):
     zone = get_zone_or_none(zone_id)
 
@@ -182,7 +182,7 @@ def zone_edit(zone_id):
 
     return render_template("zone_edit.html", zone=zone)
 
-@app.route("/zones/<int:zone_id>/delete", methods=["POST"])
+@bp.route("/zones/<int:zone_id>/delete", methods=["POST"])
 def zone_delete(zone_id):
     db = get_db()
 
