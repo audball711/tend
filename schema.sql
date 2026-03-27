@@ -1,10 +1,3 @@
-DROP TABLE IF EXISTS observations;
-DROP TABLE IF EXISTS zone_plants;
-DROP TABLE IF EXISTS plants;
-DROP TABLE IF EXISTS zones;
-DROP TABLE IF EXISTS settings;
-
-
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
     home_zip TEXT,
