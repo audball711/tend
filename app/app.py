@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, flash
 from app.helpers import get_ai_suggestions
 from app.db import get_db, init_db, seed_plants, get_zone_or_none, get_settings
 from app.page_context import build_zone_detail_context, build_home_context, update_zone_from_form
-from app.weather_theme import get_theme_settings_and_weather, build_theme_class
+from app.weather_theme import get_theme_settings_and_weather, build_theme_class, update_settings_from_form
 import os
 
 # -- APP SETUP -- 
