@@ -1,47 +1,44 @@
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
     home_zip TEXT,
-    latitude REAL,
-    longitude REAL,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     theme_mode TEXT DEFAULT 'weather',
     town_name TEXT
 );
 
-INSERT OR IGNORE INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);
+INSERT INTO settings (id, home_zip, latitude, longitude)
+VALUES (1, NULL, NULL, NULL)
+ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS zones (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     site_location TEXT,
     sun TEXT CHECK (sun IN ('full', 'partial', 'shade')),
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS plants (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    common_name TEXT NOT NULL,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    common_name TEXT NOT NULL UNIQUE,
     latin_name TEXT,
     sun TEXT CHECK (sun IN ('full', 'partial', 'shade')),
     plant_type TEXT,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS zone_plants (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    zone_id INTEGER NOT NULL,
-    plant_id INTEGER NOT NULL,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    zone_id INTEGER NOT NULL REFERENCES zones(id) ON DELETE CASCADE,
+    plant_id INTEGER NOT NULL REFERENCES plants(id),
     quantity INTEGER DEFAULT 1,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    FOREIGN KEY (zone_id) REFERENCES zones(id),
-    FOREIGN KEY (plant_id) REFERENCES plants(id)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS observations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    zone_id INTEGER NOT NULL,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    zone_id INTEGER NOT NULL REFERENCES zones(id) ON DELETE CASCADE,
     note TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    FOREIGN KEY (zone_id) REFERENCES zones(id)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-

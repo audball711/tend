@@ -1,44 +1,52 @@
 from .db import get_db, update_zone
 from .helpers import format_date, get_weather_conditions, get_town_name
 
-# -- BUILD ZONE DETAIL PAGE -- 
+
+# -- BUILD ZONE DETAIL PAGE --
 
 def build_zone_detail_context(zone_id):
     db = get_db()
 
-    zone = db.execute(
-        "SELECT * FROM zones WHERE id = ?",
-        (zone_id,)
-    ).fetchone()
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT * FROM zones WHERE id = %s",
+            (zone_id,)
+        )
+        zone = cur.fetchone()
 
-    if zone is None:
-        db.close()
-        return None
+        if zone is None:
+            return None
 
-    plants = db.execute(
-        "SELECT id, common_name FROM plants ORDER BY common_name"
-    ).fetchall()
+        cur.execute(
+            "SELECT id, common_name FROM plants ORDER BY common_name"
+        )
+        plants = cur.fetchall()
 
-    zone_plants = db.execute(
-        """
-        SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
-        FROM zone_plants
-        JOIN plants ON zone_plants.plant_id = plants.id
-        WHERE zone_plants.zone_id = ?
-        ORDER BY plants.common_name
-        """,
-        (zone_id,)
-    ).fetchall()
+        cur.execute(
+            """
+            SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
+            FROM zone_plants
+            JOIN plants ON zone_plants.plant_id = plants.id
+            WHERE zone_plants.zone_id = %s
+            ORDER BY plants.common_name
+            """,
+            (zone_id,)
+        )
+        zone_plants = cur.fetchall()
 
-    observations = db.execute(
-        """
-        SELECT id, note, created_at
-        FROM observations
-        WHERE zone_id = ?
-        ORDER BY created_at DESC
-        """,
-        (zone_id,)
-    ).fetchall()
+        cur.execute(
+            """
+            SELECT id, note, created_at
+            FROM observations
+            WHERE zone_id = %s
+            ORDER BY created_at DESC
+            """,
+            (zone_id,)
+        )
+        observations = cur.fetchall()
+
+        cur.execute("SELECT * FROM settings WHERE id = 1")
+        settings = cur.fetchone()
 
     formatted_observations = [
         {
@@ -48,10 +56,6 @@ def build_zone_detail_context(zone_id):
         }
         for obs in observations
     ]
-
-    settings = db.execute(
-        "SELECT * FROM settings WHERE id = 1"
-    ).fetchone()
 
     if settings and settings["latitude"] and settings["longitude"]:
         weather_conditions = get_weather_conditions(
@@ -63,8 +67,6 @@ def build_zone_detail_context(zone_id):
             "message": "Visit Settings to set your garden ZIP for weather forecasts.",
             "mood": "neutral"
         }
-
-    db.close()
 
     weather_for_ai = (
         weather_conditions
@@ -82,38 +84,43 @@ def build_zone_detail_context(zone_id):
     }
 
 
-# -- BUILD HOME PAGE -- 
+# -- BUILD HOME PAGE --
 
 def build_home_context():
     db = get_db()
 
-    zones = db.execute(
-        """
-        SELECT
-            zones.*,
-            (
-                SELECT COUNT(*)
-                FROM zone_plants
-                WHERE zone_plants.zone_id = zones.id
-            ) AS plant_count,
-            (
-                SELECT note
-                FROM observations
-                WHERE observations.zone_id = zones.id
-                ORDER BY created_at DESC
-                LIMIT 1
-            ) AS latest_note,
-            (
-                SELECT created_at
-                FROM observations
-                WHERE observations.zone_id = zones.id
-                ORDER BY created_at DESC
-                LIMIT 1
-            ) AS latest_note_date
-        FROM zones
-        ORDER BY id DESC
-        """
-    ).fetchall()
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                zones.*,
+                (
+                    SELECT COUNT(*)
+                    FROM zone_plants
+                    WHERE zone_plants.zone_id = zones.id
+                ) AS plant_count,
+                (
+                    SELECT note
+                    FROM observations
+                    WHERE observations.zone_id = zones.id
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                ) AS latest_note,
+                (
+                    SELECT created_at
+                    FROM observations
+                    WHERE observations.zone_id = zones.id
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                ) AS latest_note_date
+            FROM zones
+            ORDER BY id DESC
+            """
+        )
+        zones = cur.fetchall()
+
+        cur.execute("SELECT * FROM settings WHERE id = 1")
+        settings = cur.fetchone()
 
     formatted_zones = [
         {
@@ -129,10 +136,6 @@ def build_home_context():
         for z in zones
     ]
 
-    settings = db.execute(
-        "SELECT * FROM settings WHERE id = 1"
-    ).fetchone()
-
     weather = None
     town_name = None
 
@@ -146,15 +149,14 @@ def build_home_context():
             settings["longitude"]
         )
 
-    db.close()
-
     return {
         "zones": formatted_zones,
         "weather": weather,
         "town_name": town_name
     }
 
-# -- ZONE UPDATE FORM -- 
+
+# -- ZONE UPDATE FORM --
 
 def update_zone_from_form(zone_id, form):
     name = form.get("name", "").strip()

@@ -19,9 +19,9 @@ def get_time_class():
 def get_theme_settings_and_weather():
     db = get_db()
 
-    settings = db.execute(
-        "SELECT * FROM settings WHERE id = 1"
-    ).fetchone()
+    with db.cursor() as cur:
+        cur.execute("SELECT * FROM settings WHERE id = 1")
+        settings = cur.fetchone()
 
     weather = None
     if settings and settings["latitude"] and settings["longitude"]:
@@ -30,7 +30,6 @@ def get_theme_settings_and_weather():
             settings["longitude"]
         )
 
-    db.close()
     return settings, weather
 
 

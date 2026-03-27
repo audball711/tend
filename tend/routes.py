@@ -28,12 +28,12 @@ def zones_new():
             return redirect("/zones/new")
 
         db = get_db()
-        db.execute(
-            "INSERT INTO zones (name, site_location, sun) VALUES (?, ?, ?)",
-            (name, site_location, sun)
-        )
+        with db.cursor() as cur:
+            cur.execute(
+                "INSERT INTO zones (name, site_location, sun) VALUES (%s, %s, %s)",
+                (name, site_location, sun)
+            )
         db.commit()
-        db.close()
 
         return redirect("/")
 
@@ -73,7 +73,6 @@ def zone_detail(zone_id):
 
 @bp.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
-
     zone = get_zone_or_none(zone_id)
     if zone is None:
         flash("That garden space could not be found.")
@@ -90,39 +89,36 @@ def add_plant_to_zone(zone_id):
         quantity = 1
 
     db = get_db()
-    db.execute(
-        "INSERT INTO zone_plants (zone_id, plant_id, quantity) VALUES (?, ?, ?)",
-        (zone_id, plant_id, int(quantity))
-    )
+    with db.cursor() as cur:
+        cur.execute(
+            "INSERT INTO zone_plants (zone_id, plant_id, quantity) VALUES (%s, %s, %s)",
+            (zone_id, plant_id, int(quantity))
+        )
     db.commit()
-    db.close()
 
     return redirect(f"/zones/{zone_id}")
 
 @bp.route("/zone-plants/<int:id>/delete", methods=["POST"])
 def delete_zone_plant(id):
-
     db = get_db()
 
-    # get zone id for redirecting
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT zone_id FROM zone_plants WHERE id = %s",
+            (id,)
+        )
+        row = cur.fetchone()
 
-    row = db.execute(
-        "SELECT zone_id FROM zone_plants WHERE id = ?",
-        (id,)
-    ).fetchone()
+        if row is None:
+            flash("That plant entry could not be found.")
+            return redirect("/")
 
-    if row is None:
-        db.close()
-        flash("That plant entry could not be found.")
-        return redirect("/")
-
-    db.execute(
-        "DELETE FROM zone_plants WHERE id = ?",
-        (id,)
-    )
+        cur.execute(
+            "DELETE FROM zone_plants WHERE id = %s",
+            (id,)
+        )
 
     db.commit()
-    db.close()
 
     return redirect(f"/zones/{row['zone_id']}")
 
@@ -133,17 +129,16 @@ def add_observation(zone_id):
         flash("That garden space could not be found.")
         return redirect("/")
 
-
     note = request.form.get("note", "").strip()
 
     if note:
         db = get_db()
-        db.execute(
-            "INSERT INTO observations (zone_id, note) VALUES (?, ?)",
-            (zone_id, note)
-        )
+        with db.cursor() as cur:
+            cur.execute(
+                "INSERT INTO observations (zone_id, note) VALUES (%s, %s)",
+                (zone_id, note)
+            )
         db.commit()
-        db.close()
 
     return redirect(f"/zones/{zone_id}")
 
@@ -186,23 +181,20 @@ def zone_edit(zone_id):
 def zone_delete(zone_id):
     db = get_db()
 
-    zone = db.execute(
-        "SELECT * FROM zones WHERE id = ?",
-        (zone_id,)
-    ).fetchone()
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT * FROM zones WHERE id = %s",
+            (zone_id,)
+        )
+        zone = cur.fetchone()
 
-    if zone is None:
-        db.close()
-        flash("That garden space could not be found.")
-        return redirect("/")
+        if zone is None:
+            flash("That garden space could not be found.")
+            return redirect("/")
 
-    # delete children first, then the zone
-    db.execute("DELETE FROM observations WHERE zone_id = ?", (zone_id,))
-    db.execute("DELETE FROM zone_plants WHERE zone_id = ?", (zone_id,))
-    db.execute("DELETE FROM zones WHERE id = ?", (zone_id,))
+        cur.execute("DELETE FROM zones WHERE id = %s", (zone_id,))
 
     db.commit()
-    db.close()
 
     flash("Garden space deleted.")
     return redirect("/")

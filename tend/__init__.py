@@ -1,7 +1,7 @@
 from flask import Flask
 import os
 
-from .db import init_db, seed_plants
+from .db import init_db, seed_plants, close_db
 from .weather_theme import get_theme_settings_and_weather, build_theme_class
 
 
@@ -9,8 +9,11 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
 
-    init_db()
-    seed_plants()
+    with app.app_context():
+        init_db()
+        seed_plants()
+
+    app.teardown_appcontext(close_db)
 
     @app.context_processor
     def inject_theme():
@@ -22,5 +25,6 @@ def create_app():
     app.register_blueprint(bp)
 
     return app
+
 
 app = create_app()
