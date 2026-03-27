@@ -1,29 +1,12 @@
 # -- IMPORTS -- 
 
-from flask import Flask, redirect, render_template, request, flash
-from app.helpers import get_ai_suggestions
-from app.db import get_db, init_db, seed_plants, get_zone_or_none, get_settings
-from app.page_context import build_zone_detail_context, build_home_context, update_zone_from_form
-from app.weather_theme import get_theme_settings_and_weather, build_theme_class, update_settings_from_form
-import os
+from flask import redirect, render_template, request, flash
 
-# -- APP SETUP -- 
-
-app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
-
-# -- DB STRUCTURE AND PLANT DATA -- 
-
-init_db()
-seed_plants()
-
-#  -- CONTEXT PROCESSOR --
-
-@app.context_processor
-def inject_theme():
-    settings, weather = get_theme_settings_and_weather()
-    theme_class = build_theme_class(settings, weather)
-    return dict(theme_class=theme_class)
+from . import app
+from .helpers import get_ai_suggestions
+from .db import get_db, get_zone_or_none, get_settings
+from .page_context import build_zone_detail_context, build_home_context, update_zone_from_form
+from .weather_theme import update_settings_from_form
 
 
 # -- ROUTE FOR HOME PAGE AND NEW ZONE -- 

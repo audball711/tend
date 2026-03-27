@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.db import get_db, save_settings
-from app.helpers import get_weather_conditions, zip_to_latlon, get_town_name
+from .db import get_db, save_settings
+from .helpers import get_weather_conditions, zip_to_latlon, get_town_name
 
 
 def get_time_class():

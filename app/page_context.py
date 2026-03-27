@@ -1,6 +1,5 @@
-from app.db import get_db
-from app.helpers import format_date, get_weather_conditions, get_town_name
-from db import update_zone
+from .db import get_db, update_zone
+from .helpers import format_date, get_weather_conditions, get_town_name
 
 # -- BUILD ZONE DETAIL PAGE -- 
 
