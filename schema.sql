@@ -11,6 +11,7 @@ CREATE TABLE settings (
     latitude REAL,
     longitude REAL,
     theme_mode TEXT DEFAULT 'weather'
+    town_name TEXT
 );
 
 INSERT INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);

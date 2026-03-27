@@ -13,7 +13,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-
+# weather theme in settings 
 @app.context_processor
 def inject_theme():
     db = get_db()
@@ -215,6 +215,8 @@ def zone_detail(zone_id):
             "note": obs["note"],
             "created_at": format_date(obs["created_at"])
         })
+
+        #revisit - do we need this 
 
     suggested_plants = []
 
@@ -511,9 +513,6 @@ def zone_delete(zone_id):
 
     flash("Garden space deleted.")
     return redirect("/")
-
-
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
