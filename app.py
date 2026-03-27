@@ -32,8 +32,8 @@ def seed_plants():
             db.executescript(f.read())
         db.commit()
 
-seed_plants()
 init_db()
+seed_plants()
 
 # weather theme in settings 
 @app.context_processor
