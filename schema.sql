@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS settings (
     town_name TEXT
 );
 
-INSERT INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);
+INSERT INTO OR IGNORE INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);
 
 CREATE TABLE IF NOT EXISTS zones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
