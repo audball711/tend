@@ -21,6 +21,18 @@ def init_db():
         db.executescript(f.read())
     db.commit()
 
+def seed_plants():
+    db = get_db()
+
+    # check if plants already exist
+    count = db.execute("SELECT COUNT(*) as count FROM plants").fetchone()
+
+    if count["count"] == 0:
+        with open("plants.sql") as f:
+            db.executescript(f.read())
+        db.commit()
+
+seed_plants()
 init_db()
 
 # weather theme in settings 
