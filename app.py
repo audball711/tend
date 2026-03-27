@@ -1,36 +1,11 @@
 from flask import Flask, redirect, render_template, request, flash
-import sqlite3
 from helpers import get_weather_conditions, zip_to_latlon, format_date, get_ai_suggestions, get_town_name
-import os
+from db import get_db, init_db, seed_plants, get_zone_or_none
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
-
-
-def get_db():
-    # create folder if it doesnt exist
-    os.makedirs("instance", exist_ok=True)
-    conn = sqlite3.connect("instance/tend.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    db = get_db()
-    with open("schema.sql") as f:
-        db.executescript(f.read())
-    db.commit()
-
-def seed_plants():
-    db = get_db()
-
-    # check if plants already exist
-    count = db.execute("SELECT COUNT(*) as count FROM plants").fetchone()
-
-    if count["count"] == 0:
-        with open("plants.sql") as f:
-            db.executescript(f.read())
-        db.commit()
 
 init_db()
 seed_plants()
@@ -137,9 +112,7 @@ def home():
     weather = None
     if settings and settings["latitude"] and settings["longitude"]:
         weather = get_weather_conditions(settings["latitude"], settings["longitude"])
-
-    settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
-
+        
     town_name = None
 
     if settings and settings["latitude"] and settings["longitude"]:
@@ -204,6 +177,11 @@ def zone_detail(zone_id):
         (zone_id,)
     ).fetchone()
 
+    if zone is None:
+        db.close()
+        flash("That garden space could not be found.")
+        return redirect("/")
+
     plants = db.execute(
         "SELECT id, common_name FROM plants ORDER BY common_name"
     ).fetchall()
@@ -222,7 +200,7 @@ def zone_detail(zone_id):
     observations = db.execute(
         """
         SELECT id, note, created_at
-        FROM observations 
+        FROM observations
         WHERE zone_id = ?
         ORDER BY created_at DESC
         """,
@@ -230,31 +208,12 @@ def zone_detail(zone_id):
     ).fetchall()
 
     formatted_observations = []
-
     for obs in observations:
         formatted_observations.append({
             "id": obs["id"],
             "note": obs["note"],
             "created_at": format_date(obs["created_at"])
         })
-
-        #revisit - do we need this 
-
-    suggested_plants = []
-
-    if zone["sun"]:
-        suggested_plants = db.execute(
-            """
-            SELECT id, common_name, plant_type, sun
-            FROM plants
-            WHERE sun = ?
-            AND id NOT IN (
-                SELECT plant_id FROM zone_plants WHERE zone_id = ?
-            )
-            ORDER BY plant_type, common_name
-            """,
-            (zone["sun"], zone_id)
-        ).fetchall()
 
     settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
 
@@ -271,102 +230,17 @@ def zone_detail(zone_id):
 
     db.close()
 
+    show_insight = request.args.get("insight") == "1"
     ai_suggestions = None
 
-    return render_template(
-        "zone_detail.html",
-        zone=zone,
-        plants=plants,
-        zone_plants=zone_plants,
-        observations=formatted_observations,
-        suggested_plants=suggested_plants,
-        weather_conditions=weather_conditions,
-        ai_suggestions=ai_suggestions
-    )
-
-
-@app.route("/zones/<int:zone_id>/suggestion", methods=["POST"])
-def zone_detail_suggestion(zone_id):
-    db = get_db()
-
-    zone = db.execute(
-        "SELECT * FROM zones WHERE id = ?",
-        (zone_id,)
-    ).fetchone()
-
-    plants = db.execute(
-        "SELECT id, common_name FROM plants ORDER BY common_name"
-    ).fetchall()
-
-    zone_plants = db.execute(
-        """
-        SELECT zone_plants.id, plants.common_name, plants.plant_type, zone_plants.quantity
-        FROM zone_plants
-        JOIN plants ON zone_plants.plant_id = plants.id
-        WHERE zone_plants.zone_id = ?
-        ORDER BY plants.common_name
-        """,
-        (zone_id,)
-    ).fetchall()
-
-    observations = db.execute(
-        """
-        SELECT id, note, created_at
-        FROM observations 
-        WHERE zone_id = ?
-        ORDER BY created_at DESC
-        """,
-        (zone_id,)
-    ).fetchall()
-
-    formatted_observations = []
-
-    for obs in observations:
-        formatted_observations.append({
-            "id": obs["id"],
-            "note": obs["note"],
-            "created_at": format_date(obs["created_at"])
-        })
-
-    suggested_plants = []
-
-    if zone["sun"]:
-        suggested_plants = db.execute(
-            """
-            SELECT id, common_name, plant_type, sun
-            FROM plants
-            WHERE sun = ?
-            AND id NOT IN (
-                SELECT plant_id FROM zone_plants WHERE zone_id = ?
-            )
-            ORDER BY plant_type, common_name
-            """,
-            (zone["sun"], zone_id)
-        ).fetchall()
-
-    settings = db.execute("SELECT * FROM settings WHERE id = 1").fetchone()
-
-    if settings and settings["latitude"] and settings["longitude"]:
-        weather_conditions = get_weather_conditions(
-            settings["latitude"],
-            settings["longitude"]
+    if show_insight:
+        ai_suggestions = get_ai_suggestions(
+            zone["name"],
+            zone["sun"],
+            zone_plants,
+            formatted_observations,
+            weather_conditions if isinstance(weather_conditions, dict) and "temp_high" in weather_conditions else None
         )
-    else:
-        weather_conditions = {
-            "message": "Visit Settings to set your garden ZIP for weather forecasts.",
-            "mood": "neutral"
-        }
-
-    db.close()
-
-    ai_suggestions = get_ai_suggestions(
-        zone["name"],
-        zone["sun"],
-        zone_plants,
-        formatted_observations,
-        suggested_plants,
-        weather_conditions if isinstance(weather_conditions, dict) and "temp_high" in weather_conditions else None
-    )
 
     return render_template(
         "zone_detail.html",
@@ -374,13 +248,19 @@ def zone_detail_suggestion(zone_id):
         plants=plants,
         zone_plants=zone_plants,
         observations=formatted_observations,
-        suggested_plants=suggested_plants,
         weather_conditions=weather_conditions,
         ai_suggestions=ai_suggestions
     )
+
 
 @app.route("/zones/<int:zone_id>/add-plant", methods=["POST"])
 def add_plant_to_zone(zone_id):
+
+    zone = get_zone_or_none(zone_id)
+    if zone is None:
+        flash("That garden space could not be found.")
+        return redirect("/")
+
     plant_id = request.form.get("plant_id")
     quantity = request.form.get("quantity", "1").strip()
 
@@ -413,6 +293,11 @@ def delete_zone_plant(id):
         (id,)
     ).fetchone()
 
+    if row is None:
+        db.close()
+        flash("That plant entry could not be found")
+        return redirect("/")
+
     db.execute(
         "DELETE FROM zone_plants WHERE id = ?",
         (id,)
@@ -425,6 +310,12 @@ def delete_zone_plant(id):
 
 @app.route("/zones/<int:zone_id>/add-observation", methods=["POST"])
 def add_observation(zone_id):
+    zone = get_zone_or_none(zone_id)
+    if zone is None:
+        flash("That garden space could not be found.")
+        return redirect("/")
+
+
     note = request.form.get("note", "").strip()
 
     if note:
@@ -525,6 +416,16 @@ def zone_edit(zone_id):
 def zone_delete(zone_id):
     db = get_db()
 
+    zone = db.execute(
+        "SELECT * FROM zones WHERE id = ?",
+        (zone_id,)
+    ).fetchone()
+
+    if zone is None:
+        db.close()
+        flash("That garden space could not be found.")
+        return redirect("/")
+
     # delete children first, then the zone
     db.execute("DELETE FROM observations WHERE zone_id = ?", (zone_id,))
     db.execute("DELETE FROM zone_plants WHERE zone_id = ?", (zone_id,))
@@ -535,6 +436,3 @@ def zone_delete(zone_id):
 
     flash("Garden space deleted.")
     return redirect("/")
-
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)

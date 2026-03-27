@@ -116,21 +116,13 @@ def get_weather_conditions(latitude, longitude):
         }
 
 
-def get_ai_suggestions(zone_name, sun, zone_plants, observations, catalog_plants=None, weather=None):
+def get_ai_suggestions(zone_name, sun, zone_plants, observations, weather=None):
     try:
         if not observations:
             return None
 
         plant_list = ", ".join([p["common_name"] for p in zone_plants]) if zone_plants else "none yet"
         observation_list = "\n".join([f"- {obs['note']}" for obs in observations[:10]])
-
-        catalog_context = ""
-        if catalog_plants:
-            catalog_names = ", ".join([p["common_name"] for p in catalog_plants])
-            catalog_context = (
-                f"Plants available in the Tend catalog that match this zone's sun conditions: "
-                f"{catalog_names}"
-            )
 
         weather_context = ""
         if weather and weather.get("temp_high"):
@@ -161,8 +153,6 @@ CONTEXT
 Zone name: {zone_name}
 Sun exposure: {sun}
 Plants growing here: {plant_list}
-
-{catalog_context}
 
 {weather_context}
 

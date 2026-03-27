@@ -134,19 +134,24 @@
       <p>Surface a seasonal care note for this garden zone.</p>
     </div>
 
-    <form method="post" action="/zones/{{ zone['id'] }}/suggestion" class="ai-trigger-form">
-      <button type="submit" class="ai-trigger">
-        ✦ Get Tend Insight
-      </button>
-    </form>
+<form method="get" action="/zones/{{ zone['id'] }}#insight-anchor" class="ai-trigger-form">
+  <input type="hidden" name="insight" value="1">
+  <button type="submit" class="ai-trigger" id="insight-button">
+    ✦ Get Tend Insight ✦
+  </button>
+</form>
+
+<div id="insight-anchor"></div>
 
     {% if ai_suggestions %}
-      <div class="ai-note">
+      <div class="ai-note ai-note-filled">
+        <div class="ai-note-label">Tend Insight</div>
         <p>{{ ai_suggestions }}</p>
       </div>
     {% else %}
       <div class="ai-note ai-note-empty">
-        <p>No suggestion loaded yet. Use the suggestion engine when you want guidance for this zone.</p>
+        <div class="ai-note-label">Tend Insight</div>
+        <p>Your insight will load here once you're ready!</p>
       </div>
     {% endif %}
   </section>
@@ -176,4 +181,21 @@
   </section>
 
 </div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const insightForm = document.querySelector(".ai-trigger-form");
+    const insightButton = document.getElementById("insight-button");
+
+    if (insightForm && insightButton) {
+      insightForm.addEventListener("submit", function () {
+        insightButton.disabled = true;
+        insightButton.textContent = "Thinking…";
+        insightButton.classList.add("is-loading");
+      });
+    }
+  });
+</script>
+
 {% endblock %}
