@@ -127,3 +127,21 @@ select option {
   font-size: .95rem;
   color: var(--text-muted);
 }
+/* DEMO BANNER */
+
+.demo-banner {
+  margin: 1rem auto;
+  padding: 0.75rem 1rem;
+  max-width: 800px;
+  text-align: center;
+  font-size: 0.95rem;
+  border-radius: 16px;
+  letter-spacing: 0.2px;
+
+
+  background: linear-gradient(135deg, #e4f0dc, #d3e5c8);
+  color: #5a3e2b;
+
+  border: 1px solid rgba(90, 62, 43, 0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
