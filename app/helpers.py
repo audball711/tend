@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def build_weather_message(mood, temp_high=None, humidity=None, wind_mph=None):
     if mood == "rainy":
         return "Rain arriving or damp conditions — watering is probably unnecessary today."
