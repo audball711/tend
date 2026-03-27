@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS settings (
     home_zip TEXT,
     latitude REAL,
     longitude REAL,
-    theme_mode TEXT DEFAULT 'weather'
+    theme_mode TEXT DEFAULT 'weather',
     town_name TEXT
 );
 
