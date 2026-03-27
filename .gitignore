@@ -1,7 +1,6 @@
 .env
 .venv
-instance/tend.db
+instance/
 __pycache__/
 *.pyc
 .DS_Store
-instance.tend.db
