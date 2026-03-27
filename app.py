@@ -9,10 +9,19 @@ app.secret_key = os.environ.get("SECRET_KEY", "tend-dev-key")
 
 
 def get_db():
+    # create folder if it doesnt exist
     os.makedirs("instance", exist_ok=True)
     conn = sqlite3.connect("instance/tend.db")
     conn.row_factory = sqlite3.Row
     return conn
+
+def init_db():
+    db = get_db()
+    with open("schema.sql") as f:
+        db.executescript(f.read())
+    db.commit()
+
+init_db()
 
 # weather theme in settings 
 @app.context_processor

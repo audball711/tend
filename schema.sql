@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS zones;
 DROP TABLE IF EXISTS settings;
 
 
-CREATE TABLE settings (
+CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
     home_zip TEXT,
     latitude REAL,
@@ -16,7 +16,7 @@ CREATE TABLE settings (
 
 INSERT INTO settings (id, home_zip, latitude, longitude) VALUES (1, NULL, NULL, NULL);
 
-CREATE TABLE zones (
+CREATE TABLE IF NOT EXISTS zones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     site_location TEXT,
@@ -24,7 +24,7 @@ CREATE TABLE zones (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE TABLE plants (
+CREATE TABLE IF NOT EXISTS plants (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     common_name TEXT NOT NULL,
     latin_name TEXT,
@@ -33,7 +33,7 @@ CREATE TABLE plants (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE TABLE zone_plants (
+CREATE TABLE IF NOT EXISTS zone_plants (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     zone_id INTEGER NOT NULL,
     plant_id INTEGER NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE zone_plants (
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
-CREATE TABLE observations (
+CREATE TABLE IF NOT EXISTS observations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     zone_id INTEGER NOT NULL,
     note TEXT NOT NULL,
