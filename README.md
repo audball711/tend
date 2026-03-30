@@ -1,10 +1,10 @@
 # Tend (Working Name)
 
-#### Video Demo: https://youtube.com/xxxxx
+#### Video Demo: https://youtu.be/urqQSYvYAzM
 
 #### Live Application: https://your-app.onrender.com
 
-#### Demo Environment:
+#### Demo Environment: 
 
 The live application is currently running as a shared demo space. This means that all users interact with the same set of zones and observations rather than having separate accounts. This approach was chosen to keep the application simple for demonstration and testing purposes.
 
