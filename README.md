@@ -1,190 +1,194 @@
-# Tend (Working Name)
+# Tend — Intelligent Garden Tracking & Reflection App
 
-#### Video Demo: https://youtu.be/urqQSYvYAzM
-
-#### Live Application: https://tend-3b2l.onrender.com
+#### Live Application: https://tend-3b2l.onrender.com  
+#### Demo Video: https://youtu.be/urqQSYvYAzM  
+#### Repository: https://github.com/audball711/tend  
 
 ---
 
-## Demo Environment
+## Preview
 
-The live application is currently running as a shared demo space. This means that all users interact with the same set of zones and observations rather than having separate accounts. This approach was chosen to keep the application simple for demonstration and testing purposes.
-
-In future iterations, the application could be extended to support user accounts and personalized spaces, but for this version the shared environment allows multiple users to explore the full functionality of the system without requiring authentication.
+![Tend Screenshot](./screenshot.png)
 
 ---
 
 ## Overview
 
-Tend is a web-based application designed to help users track, understand, and reflect on their garden or growing spaces. The goal of this project is to create a simple, yet intelligent, zone-based system that allows users to log observations about their environment and receive helpful insights without needing to manually analyze everything themselves.
+Tend is a full-stack web application designed to help users track, understand, and reflect on their garden spaces through a simple, structured system.
 
-The core idea behind Tend is that people may become overwhelmed with what is happening in their garden over time, especially new gardeners. Instead of relying on memory or complex tracking systems, Tend provides a calm and intuitive interface where users can organize their space into zones and record what they notice.
+The application introduces a zone-based model where users log observations over time and receive focused, AI-generated reflections. Rather than overwhelming users with data or automation, Tend emphasizes clarity, simplicity, and real-world context.
 
-Over time, the system uses these observations along with environmental context to generate reflections that help users better understand patterns and changes.
-
----
-
-## Core Features
-
-The main feature of the application is the concept of "zones." A zone represents a physical area such as a garden bed or section of land.
-
-Each zone contains:
-
-* Observations (user-entered notes)
-* Environmental context (sun, location)
-* A historical record of activity over time
-
-Observations are timestamped and stored in the database so that users can build a history of what is happening in each space.
+This project reflects my approach to building software: thoughtful systems, clean architecture, and user-first design.
 
 ---
 
-## Reflection System
+## Key Features
 
-A key feature of the system is the reflection engine. When a user clicks the reflect button, the application gathers recent observations and generates a single, focused insight.
+- Zone-Based Tracking  
+  Organize physical spaces (garden beds, areas of land) into structured zones. Each zone maintains its own history and environmental context.
 
-Rather than overwhelming the user with multiple suggestions, the system is intentionally designed to return one meaningful thought at a time. This keeps the experience simple and supportive.
+- Observation Logging  
+  Timestamped notes stored in PostgreSQL to build a historical dataset for each zone.
 
-During development, I initially explored adding automatic plant suggestions for each zone. However, I chose to remove this feature because it was not truly tied to the user’s data and risked becoming generic.
+- AI Reflection Engine  
+  Generates a single, focused insight based on recent observations to support decision-making without overwhelming the user.
 
-Instead, I focused on generating insights based on actual observations, time, and environmental context. This decision helped keep the system grounded and aligned with real conditions.
+- Environmental Context Integration  
+  Weather-aware and time-of-day-aware UI with a dynamic theme system (sunny, rainy, cloudy, dawn, dusk, night).
 
----
-
-## Environmental Context & UI
-
-Another important part of the project is the integration of location and weather context.
-
-The application uses this information to influence both insights and the visual experience. The interface includes a theme system that adapts based on:
-
-* Weather (sunny, rainy, cloudy, neutral)
-* Time of day (dawn, day, dusk, night)
-
-This creates a more immersive experience that reflects the user’s real environment.
+- Shared Demo Environment  
+  The live app operates as a shared space so multiple users can explore functionality without authentication.
 
 ---
 
-## Architecture & Structure
+## Technical Stack
 
-The application is built using Flask as the backend framework and uses a PostgreSQL database to store zones, observations, settings, and related data.
+Backend  
+- Python  
+- Flask (application factory pattern)  
+- PostgreSQL  
 
-During development, I refactored the database layer to fully support PostgreSQL, creating a more production-ready and consistent architecture.
+Frontend  
+- HTML  
+- CSS  
+- JavaScript  
+- Jinja  
 
-### File Structure
+Infrastructure  
+- Render  
+- GitHub  
 
-* `tend/__init__.py`
-  Uses the application factory pattern to create and configure the Flask app.
-
-* `tend/routes.py`
-  Contains all route logic, including rendering pages, handling forms, and triggering reflections.
-
-* `tend/db.py`
-  Manages database connections and queries using PostgreSQL.
-
-* `tend/weather_theme.py`
-  Handles weather-based theming and environmental context.
-
-* `tend/page_context.py`
-  Injects shared data (such as theme and weather) into templates.
-
-* `tend/helpers.py`
-  Contains utility functions used across the app.
-
-* `templates/`
-  Contains all HTML templates rendered using Jinja.
-
-* `static/`
-  Contains CSS and JavaScript assets, including dynamic theme styling.
-
-* `schema.sql`
-  Defines database structure.
-
-* `plants.sql`
-  Seeds initial plant data.
-
-* `requirements.txt`
-  Lists Python dependencies.
+AI Integration  
+- Context-aware prompt construction using structured user data  
 
 ---
 
-## Running the Application Locally
+## Architecture
 
-To run this application locally, a PostgreSQL database is required.
+The application uses a modular Flask structure with clear separation of concerns.
 
-### 1. Install dependencies
+Core components:
 
+- tend/__init__.py  
+  Initializes the app using the application factory pattern  
+
+- tend/routes.py  
+  Handles routing, forms, and reflection logic  
+
+- tend/db.py  
+  PostgreSQL connection and queries  
+
+- tend/weather_theme.py  
+  Weather and UI theming logic  
+
+- tend/page_context.py  
+  Injects shared data into templates  
+
+- tend/helpers.py  
+  Utility functions  
+
+- templates/  
+  Jinja templates  
+
+- static/  
+  CSS and JavaScript  
+
+- schema.sql / plants.sql  
+  Database structure and seed data  
+
+---
+
+## Key Engineering Decisions
+
+- PostgreSQL over SQLite  
+  Migrated to a production-ready database for scalability  
+
+- Application Factory Pattern  
+  Improves modularity and scalability  
+
+- Single Insight UX  
+  Returns one meaningful insight instead of overwhelming users  
+
+- Context-Driven AI  
+  Uses real user data instead of generic suggestions  
+
+- Separation of Concerns  
+  Keeps routing, database, and UI logic cleanly divided  
+
+---
+
+## Running Locally
+
+1. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Create a PostgreSQL database
+2. Set up PostgreSQL  
+Create a database and get a connection string.
 
-Create a database and obtain a connection string.
+3. Set environment variable  
 
-### 3. Set environment variable
-
-On macOS/Linux:
-
+macOS/Linux:
 ```bash
-export DATABASE_URL="your_postgres_connection_string"
+export DATABASE_URL="your_connection_string"
 ```
 
-On Windows:
-
+Windows:
 ```bash
-set DATABASE_URL=your_postgres_connection_string
+set DATABASE_URL=your_connection_string
 ```
 
-### 4. Initialize database
-
-The application will automatically:
-
-* Create tables using `schema.sql`
-* Seed plant data using `plants.sql` (if empty)
-
-### 5. Run the app
-
+4. Run the app
 ```bash
 flask run
 ```
 
 ---
 
-## Important Notes
+## What This Project Demonstrates
 
-* This project uses **PostgreSQL**, not SQLite
-* The app depends on the `DATABASE_URL` environment variable to run
-
----
-
-## Design Philosophy
-
-One of the key design decisions in this project was to prioritize simplicity.
-
-Instead of building a complex system with many features, I focused on a small set of core interactions:
-
-* Zones
-* Observations
-* Reflections
-
-I also chose to present only one insight at a time to avoid overwhelming the user.
-
-Another important decision was to treat the AI component as a supportive assistant rather than an authoritative system. The goal is to help users think more clearly and notice patterns, not to replace human judgment.
+- Building and deploying a full-stack application  
+- Designing backend architecture with Flask  
+- Working with PostgreSQL  
+- Structuring real-world data models  
+- Creating intentional user experiences  
+- Integrating AI in a practical way  
+- Debugging, refactoring, and deploying to production  
 
 ---
 
-## Future Improvements
+## Background
 
-Future improvements could include:
+I come from a background in hospitality, event management, and SaaS sales, where I developed strong communication and problem-solving skills.
 
-* Plant-level tracking within zones
-* A planning interface for garden layouts and materials
-* A local-first version using a device such as a Raspberry Pi
-* User accounts and personalized garden spaces
+I transitioned into software development through Harvard’s CS50 and hands-on project work. Tend represents my ability to take an idea from concept to deployment.
+
+This combination of technical ability and customer-facing experience positions me well for:
+
+- Junior Software Engineer roles  
+- Sales Engineer / Solutions Engineer roles  
+- Product-focused technical roles  
 
 ---
 
-## Final Thoughts
+## Future Development
 
-Tend is designed to be a lightweight but thoughtful tool that helps users build awareness of their space over time.
+- User accounts and personalized environments  
+- Plant-level tracking  
+- Planning tools and materials systems  
+- Local-first (Raspberry Pi) version  
+- Expanded AI tied to user-owned data  
 
-By combining tracking, environmental context, and reflection, the application aims to create a calm and intuitive experience that supports both beginner and experienced gardeners.
+---
+
+## Closing
+
+Tend is intentionally simple, but deeply considered.
+
+It reflects how I approach building software:
+- grounded in real use cases  
+- designed for clarity  
+- structured for growth  
+
+I am actively seeking opportunities where I can continue building and contributing to meaningful products.
